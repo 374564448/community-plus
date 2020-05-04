@@ -1,0 +1,185 @@
+.nav-top {
+  height: 4px;
+  background-color: #00b5ad;
+  border-radius: 3px 3px 0 0;
+  margin-top: 3px;
+}
+
+/* 导航栏 */
+.nav-bottom {
+  height: 44px;
+  border: 1px solid #EBEEF5;
+  border-radius: 0 0 3px 3px;
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
+  padding: 0 160px 0 160px;
+  color: #888888;
+}
+
+/* logo */
+.logo {
+  float: left;
+  cursor: pointer;
+  margin: 3px 30px 3px 0;
+}
+
+.logo-img {
+  float: left;
+}
+.logo-font {
+  float: left;
+  height: 40px;
+  font-size: 20px;
+  font-style:italic;
+  font-weight: 900;
+  line-height: 40px;
+  margin-right: 30px;
+}
+.logo-font:hover{
+  color: rgba(0,0,0,0.7);
+}
+
+  /*搜索框*/
+.search {
+  float: left;
+  width: 250px;
+  border-radius: 6px;
+  line-height: 44px;
+}
+
+/*登录成功显示部分*/
+.isLogin {
+  float: right;
+}
+/*文章发布*/
+.isLogin .publish {
+  float: left;
+  height: 44px;
+  padding: 0 8px;
+  text-align: center;
+  line-height: 44px;
+  cursor: pointer;
+}
+.publish:hover {
+  background-color: #EBEEF5;
+}
+/*通知*/
+.isLogin .notice {
+  position: relative;
+  float: left;
+  height: 44px;
+  padding: 0 8px;
+  text-align: center;
+  line-height: 44px;
+  cursor: pointer;
+}
+.notice:hover {
+  background-color: #EBEEF5;
+}
+.notice .count {
+  position: absolute;
+  text-align: center;
+  color: #fff;
+  right: 3px;
+  top: 3px;
+  height: 16px;
+  width: 17px;
+  line-height: 16px;
+  border-radius: 50%;
+  font-size: 1px;
+  margin: 1px 0;
+  padding: 1px 1px;
+  background-color: #F56C6C;
+}
+/*头像和名字*/
+.isLogin .userInfo  {
+  float: right;
+  height: 44px;
+  padding: 0 8px;
+}
+.userInfo:hover {
+  background-color: #EBEEF5;
+}
+.userInfo .avatar {
+  height: 44px;
+  line-height: 44px;
+  float: left;
+  margin-right: 3px;
+  padding: 7px 0;
+  border-radius: 50%;
+}
+.userInfo .name {
+  float: left;
+  height: 44px;
+  line-height: 44px;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 500;
+}
+
+
+  /*登录部分*/
+.loginOrRegisterButton {
+  float: right;
+  height: 44px;
+  font-size: 14px;
+  line-height: 44px;
+  font-style:italic;
+  margin-right: 14px;
+  cursor: pointer;
+}
+ a {
+  color: #888888;
+  text-decoration: none;
+}
+.loginOrRegisterButton a:hover {
+  color: rgba(0,0,0,0.7);
+}
+.loginOrRegisterButton:hover {
+  color: rgba(0,0,0,0.7);
+}
+.el-dialog--center .el-dialog__body {
+  text-align: initial;
+  padding: 10px 25px 30px!important;
+}
+.general_login {
+  padding: 0 51px;
+}
+.forgetPwdOrRegister {
+  float: right;
+  margin-top: 18px;
+  font-size: 15px;
+  font-style: italic;
+}
+.forgetPwdOrRegister a {
+  color: rgba(0,0,0,0.7);
+  text-decoration: none;
+}
+.forgetPwdOrRegister a:hover {
+  text-decoration:underline;
+}
+
+.login-Agreement {
+  font-size: 13px;
+  font-style: italic;
+  padding: 0 51px;
+  margin-top: 25px;
+}
+.login-Agreement a {
+  color: #52bfed;
+  text-decoration: none;
+}
+
+.other_login-select {
+  text-align: center;
+  letter-spacing:10px;
+  user-select: none;
+}
+.other_login-select .WeChat {
+  display: inline-block;
+}
+.other_login-select .GitHub {
+  display: inline-block;
+}
+
+
+

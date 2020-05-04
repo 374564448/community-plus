@@ -1,0 +1,14 @@
+.register-box {
+  border: 1px solid #DCDFE6;
+  width: 340px;
+  margin: 150px auto;
+  padding: 35px 35px 15px 35px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  box-shadow: 0 0 25px #909399;
+}
+.checkCode {
+  font-size: 14px;
+  color: rgba(0,0,0,0.7);
+}
