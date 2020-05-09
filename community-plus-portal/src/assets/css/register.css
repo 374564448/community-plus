@@ -7,8 +7,13 @@
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   box-shadow: 0 0 25px #909399;
+  user-select: none;
 }
 .checkCode {
   font-size: 14px;
   color: rgba(0,0,0,0.7);
+}
+.register-button {
+  margin-left: 120px;
+  color: #888888;
 }

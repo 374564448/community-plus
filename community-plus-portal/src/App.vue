@@ -1,7 +1,7 @@
 <template>
   <div style="width: 100%">
     <!-- 导航栏 -->
-    <Navigation/>
+    <Navigation ref="navigation"/>
 
     <router-view/>
   </div>
@@ -20,7 +20,8 @@ export default {
   methods: {
     saveState() {
       sessionStorage.setItem('userState', JSON.stringify(this.$store.state.user));
-    }
+    },
+
   }
 }
 </script>

@@ -88,9 +88,9 @@
         <el-form ref="loginForm" :model="generalLoginDTO" :rules="rules"  label-width="80px" class="login-box">
           <el-form-item label="账号" prop="accountId" label-width="51px">
             <el-input  type="text"  placeholder="请输入账号"
-                       oninput="value=value.replace(/[^\w\.\/]/ig,'')"
+                       oninput="value=value.replace(/^\s+|\s+$/g,'')"
                        v-model="generalLoginDTO.accountId"
-                       maxlength="11"
+                       maxlength="30"
             />
           </el-form-item>
           <el-form-item label="密码" prop="password" label-width="51px">
@@ -184,6 +184,7 @@
           done();
         },
 
+
         //账号密码登录
         generalLogin() {
           // 为表单绑定验证功能
@@ -212,8 +213,12 @@
                   this.$router.push("/")
                 }
               }).catch(error => {
-                console.log(error);
-                this.$message.error("用户不存在或密码错误");
+               if (error.response.status === 400) {
+                 this.$message.error("用户不存在或密码错误!");
+               } else {
+                 this.$message.error("服务器异常,请稍后再试！");
+                 console.log('Error',error.message);
+               }
               });
             } else {
               return false;
