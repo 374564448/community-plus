@@ -32,7 +32,7 @@
     </div>
     <el-divider content-position="left"/>
     <div class="register-button">
-      <el-button type="primary" round>注 册</el-button>
+      <el-button @click="register()" type="primary" round>注 册</el-button>
     </div>
   </div>
 </template>
@@ -40,7 +40,7 @@
 <script>
   import "@/assets/css/register.css";
   import request from "@/utils/request";
-  import {SMS_CHECK_CODE_URL} from "@/utils/api";
+  import {CHECK_CODE_URL,REGISTER_USER_URL} from "@/utils/api";
     export default {
         name: "register",
         data() {
@@ -59,8 +59,6 @@
               password: '',
               checkCode: ''
             },
-          //确认密码和验证码
-            checkPassword: '',
 
             //发送验证码
             sendCodeMsg: '发送',
@@ -109,15 +107,62 @@
             return;
           }
           this.isSendCode();
-          request.get(SMS_CHECK_CODE_URL,{
+          request.get(CHECK_CODE_URL,{
             params: {
               accountId: this.registerDTO.accountId
             }
+          }).then(()=> {
+            this.$message({
+              message: '验证码发送成功,请注意查收',
+              type: 'success'
+            });
+          }).catch(error => {
+            console.log(error);
+            this.$message.error('服务器异常，请稍后再试！');
           });
-          this.$message({
-            message: '验证码发送成功,请注意查收',
-            type: 'success'
-          });
+        },
+        //注册
+        register() {
+          // 为表单绑定验证功能
+          this.$refs['registerForm'].validate((valid) => {
+              if (valid) {
+                if (this.registerDTO.checkCode.toString().length !== 6) {
+                  this.$message({
+                    message: '请输入6位验证码!',
+                    type: 'warning'
+                  });
+                  return false;
+                }
+
+               //请求后台接口注册
+                request({
+                  method: "POST",
+                  url: REGISTER_USER_URL,
+                  data: this.registerDTO
+                }).then(()=> {
+                  this.$message({
+                    message: '注册成功！',
+                    type: 'success'
+                  });
+                  //跳转首页
+                  this.$router.push("/")
+                }).catch(err => {
+                  if (err.response.status === 400) {
+                    if (err.response.data === 1) {
+                      this.$message.error('验证码错误，请重新输入！')
+                    }
+                    if (err.response.data === 2) {
+                      this.$message.error('用户已存在！');
+                    }
+                  } else {
+                    this.$message.error('服务器异常，请稍后再试！');
+                  }
+                });
+
+              } else {
+                return false;
+              }
+          })
         }
        }
     }

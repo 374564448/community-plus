@@ -11,6 +11,7 @@
         <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
         <spring-cloud-alibaba.version>2.1.0.RELEASE</spring-cloud-alibaba.version>
         <mybatis-plus.version>3.3.1.tmp</mybatis-plus.version>
+        <okhttp3.version>4.6.0</okhttp3.version>
     </properties>
 
     <licenses>
@@ -51,6 +52,7 @@
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
+
 
         </dependencies>
     </dependencyManagement>

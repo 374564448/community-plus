@@ -1,11 +1,12 @@
 package com.banmingi.communityplus.usercenter.controller;
 
 import com.banmingi.communityplus.commons.utils.JwtOperator;
-import com.banmingi.communityplus.usercenter.dto.login.GeneralLoginDTO;
-import com.banmingi.communityplus.usercenter.dto.login.JwtTokenRespDTO;
-import com.banmingi.communityplus.usercenter.dto.login.LoginRespDTO;
-import com.banmingi.communityplus.usercenter.dto.login.GitHubLoginDTO;
-import com.banmingi.communityplus.usercenter.dto.login.UserRespDTO;
+import com.banmingi.communityplus.usercenter.dto.GeneralLoginDTO;
+import com.banmingi.communityplus.usercenter.dto.GitHubLoginDTO;
+import com.banmingi.communityplus.usercenter.dto.JwtTokenRespDTO;
+import com.banmingi.communityplus.usercenter.dto.LoginRespDTO;
+import com.banmingi.communityplus.usercenter.dto.RegisterDTO;
+import com.banmingi.communityplus.usercenter.dto.UserRespDTO;
 import com.banmingi.communityplus.usercenter.entity.User;
 import com.banmingi.communityplus.usercenter.service.UserService;
 import io.jsonwebtoken.Claims;
@@ -15,12 +16,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,11 +36,33 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/users")
-@CrossOrigin
 public class UserController {
 
     private final UserService userService;
     private final JwtOperator jwtOperator;
+
+    /**
+     * 发送验证码
+     */
+    @GetMapping("/sendCheckCode")
+    public ResponseEntity<Void> sendCheckCode(@RequestParam("accountId") String accountId) {
+        this.userService.sendCheckCode(accountId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    /**
+     * 注册用户
+     * @return
+     */
+   @PostMapping("/register")
+   public ResponseEntity<Integer> register(@RequestBody RegisterDTO registerDTO) {
+       Integer status =  this.userService.register(registerDTO);
+        if (status==0) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(status);
+        }
+       return ResponseEntity.badRequest().body(status);
+   }
+
 
     /**
      * 账号密码登录

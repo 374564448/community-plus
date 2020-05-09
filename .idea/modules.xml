@@ -7,6 +7,8 @@
       <module fileurl="file://$PROJECT_DIR$/commons/commons-utils/commons-utils.iml" filepath="$PROJECT_DIR$/commons/commons-utils/commons-utils.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/community-plus.iml" filepath="$PROJECT_DIR$/.idea/community-plus.iml" />
       <module fileurl="file://$PROJECT_DIR$/dependencies/dependencies.iml" filepath="$PROJECT_DIR$/dependencies/dependencies.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gateway/gateway.iml" filepath="$PROJECT_DIR$/gateway/gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sms-center/sms-center.iml" filepath="$PROJECT_DIR$/sms-center/sms-center.iml" />
       <module fileurl="file://$PROJECT_DIR$/user-center/user-center.iml" filepath="$PROJECT_DIR$/user-center/user-center.iml" />
     </modules>
   </component>

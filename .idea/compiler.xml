@@ -7,8 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="commons-dto" />
         <module name="user-center" />
+        <module name="gateway" />
+        <module name="sms-center" />
+        <module name="commons-dto" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -17,12 +19,20 @@
       <module name="commons-utils" target="1.8" />
       <module name="community-plus" target="1.8" />
       <module name="dependencies" target="1.8" />
+      <module name="gateway" target="1.8" />
+      <module name="gatewayr (1)" target="1.8" />
+      <module name="gatewayr (2)" target="1.8" />
+      <module name="sms-center" target="1.8" />
       <module name="user-center" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="commons-dto" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+      <module name="gatewayr (1)" options="-parameters" />
+      <module name="gatewayr (2)" options="-parameters" />
+      <module name="sms-center" options="-parameters" />
       <module name="user-center" options="-parameters" />
     </option>
   </component>
