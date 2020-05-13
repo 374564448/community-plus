@@ -13,6 +13,7 @@
     "axios": "^0.19.2",
     "babel-runtime": "^6.26.0",
     "element-ui": "^2.13.1",
+    "mavon-editor": "^2.9.0",
     "qs": "^6.9.3",
     "vue": "^2.5.2",
     "vuex": "^3.3.0"

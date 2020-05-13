@@ -12,6 +12,7 @@
         <spring-cloud-alibaba.version>2.1.0.RELEASE</spring-cloud-alibaba.version>
         <mybatis-plus.version>3.3.1.tmp</mybatis-plus.version>
         <okhttp3.version>4.6.0</okhttp3.version>
+        <aliyun-OSS.version>3.9.1</aliyun-OSS.version>
     </properties>
 
     <licenses>
@@ -45,7 +46,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <!-- aliyun OSS -->
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun-OSS.version}</version>
+            </dependency>
             <!-- mybatis plus -->
             <dependency>
                 <groupId>com.baomidou</groupId>

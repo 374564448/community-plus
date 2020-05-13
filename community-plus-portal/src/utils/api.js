@@ -1,8 +1,10 @@
 //后端接口基础路径
 export const BASE_API_URL = 'http://localhost:9000';
 
-//用户中心路径
-export const USER_API_URL = BASE_API_URL + '/users';
+
+//用户中心
+//用户API路径
+export const USER_API_URL = BASE_API_URL + '/user';
 //普通账户登录
 export const GENERAL_LOGIN_URL = USER_API_URL + '/generalLogin';
 //GitHub账户登录
@@ -13,3 +15,14 @@ export const GET_USER_INFO_URL = USER_API_URL + '/userInfo';
 export const CHECK_CODE_URL = USER_API_URL + '/sendCheckCode';
 //注册
 export const REGISTER_USER_URL = USER_API_URL + '/register';
+
+
+//内容中心
+//分类API路径
+export const CATEGORY_API_URL = BASE_API_URL + '/category';
+
+//云中心
+//上传文件API路径
+export const UPLOAD_API_URL = BASE_API_URL + '/upload';
+//上传图片luj
+export const UPLOAD_IMAGE_URL = UPLOAD_API_URL + '/image';

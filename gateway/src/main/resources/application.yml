@@ -21,4 +21,16 @@ spring:
           uri: lb://user-center
           predicates:
             # 路径匹配
-            - Path=/users/**
+            - Path=/user/**
+        #内容中心
+        - id: CONTENT-CENTER
+          uri: lb://content-center
+          predicates:
+            # 路径匹配
+            - Path=/category/**,/article/**
+        #云中心
+        - id: CLOUD-CENTER
+          uri: lb://cloud-center
+          predicates:
+            # 路径匹配
+            - Path=/upload/**

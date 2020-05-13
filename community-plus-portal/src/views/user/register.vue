@@ -43,6 +43,14 @@
   import {CHECK_CODE_URL,REGISTER_USER_URL} from "@/utils/api";
     export default {
         name: "register",
+
+      //进入此页面之前先判断
+      beforeRouteEnter: ((to,from,next) => {
+        next(vm => {
+          vm.isLogin();
+        });
+      }),
+
         data() {
           //表单验证规则: 邮箱验证
           let accountIdRules = (rule, value, callback) => {
@@ -79,6 +87,14 @@
           }
         },
       methods: {
+        //判断是否已经登录,若已登录,则不能使用注册功能
+        isLogin() {
+          const isLogin = this.$store.getters.getUser.id;
+          if (isLogin) {
+            this.$router.push("/");
+          }
+        },
+
         //发送验证码倒计时
        isSendCode() {
          const TIME_COUNT = 60;
@@ -144,6 +160,7 @@
                     message: '注册成功！',
                     type: 'success'
                   });
+
                   //跳转首页
                   this.$router.push("/")
                 }).catch(err => {

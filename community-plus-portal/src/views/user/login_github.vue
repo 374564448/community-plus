@@ -23,7 +23,7 @@
           }
         },
       //路由钩子
-      //TODO: 进入此页面前先判断
+      //进入此页面前先判断
       beforeRouteEnter: ((to,from,next) => {
         //console.log("进入giuhub登录页");
         next(vm => {
@@ -34,7 +34,12 @@
       methods :{
           //通过code获取token
           getAccessTokenByCode() {
+          const client_id = this.$route.query.client_id;
           const code = this.$route.query.code;
+          if (!client_id || !code) {
+            this.$router.push("/");
+            return;
+          }
           console.log(code);
            request({
             method: 'POST',
@@ -43,7 +48,7 @@
                'Accept': 'application/json'
             },
             data: {
-              client_id: '89aba6082b823e4ea631',
+              client_id: client_id,
               client_secret: '5cb9565ed6374790d753c49fe7af2fed0d42b3d2',
               code: code
             }

@@ -19,6 +19,8 @@
         <module>gateway</module>
         <module>sms-center</module>
         <module>user-center</module>
+        <module>content-center</module>
+        <module>cloud-center</module>
     </modules>
 
 

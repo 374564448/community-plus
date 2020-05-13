@@ -1,6 +1,6 @@
 <template>
 
-  <div style="width: 100%">
+  <div style="width: 100%;">
     <div class="nav-top"></div>
     <div class="nav-bottom">
 
@@ -28,7 +28,7 @@
       <div class="isLogin" v-if="!this.loginAndRegisterButtonShow">
         <!--写作按钮-->
         <div class="publish">
-          <i class="iconfont" style="font-size: 30px;">&#xe708;</i>
+          <router-link to="/article/publish"><i class="iconfont" style="font-size: 30px;">&#xe708;</i></router-link>
         </div>
         <!--通知按钮-->
         <div class="notice">
@@ -183,7 +183,6 @@
           this.$refs['loginForm'].resetFields();
           done();
         },
-
 
         //账号密码登录
         generalLogin() {

@@ -7,6 +7,10 @@ spring:
       username: root
       password: wen175924
     driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 192.168.72.130
+    port: 6379
+    password: 123456
   cloud:
     # nacos
     nacos:

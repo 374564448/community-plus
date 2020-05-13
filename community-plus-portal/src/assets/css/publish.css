@@ -1,0 +1,132 @@
+.publish-box {
+  background-color: #fff;
+  margin: 40px 140px;
+  padding: 30px;
+  color: #888888;
+}
+
+.publish-logo {
+  color: rgba(0,0,0,0.7);
+  font-weight: 700;
+  margin: 10px 0 10px;
+  text-align: center;
+  font-size: 20px;
+  font-style: italic;
+}
+
+.editor {
+  margin: 20px 0;
+}
+
+/*标签*/
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+
+/*发布按钮和保存按钮*/
+.publish-button {
+  font-size: 16px;
+  padding:0 10px;
+  height: 36px;
+  color: #ffffff;
+  background-color: #00b5ad;
+  border-radius: 5px;
+  outline:none;
+  border: none;
+  cursor: pointer;
+}
+.publish-button:hover {
+  background-color: #0db591;
+}
+.save-button {
+  font-size: 16px;
+  color: rgba(0,0,0,0.7);
+  padding:0 12px;
+  height: 36px;
+  outline:none;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 5px;
+  cursor: pointer;
+}
+.save-button:hover {
+  background-color: rgba(0,0,0,0.1);
+}
+
+
+/*发布dialog*/
+.el-dialog__body {
+  padding: 5px 25px 20px!important;
+}
+.publish-warning {
+  margin-bottom: 10px;
+  height: 18px;
+  line-height: 18px;
+  color: #e33e33;
+  font-size: 10px;
+  background-color: #fff6e5;
+  text-align: center;
+  border-radius: 2px;
+}
+.publishDialog-title {
+  font-size: 14px;
+  color: rgba(0,0,0,0.8);
+  font-weight: 700;
+}
+.newTag-button {
+  height: 20px;
+  border-radius: 3px;
+  color: #888888;
+  font-size: 12px;
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,0.2);
+  outline:none;
+  cursor: pointer;
+}
+.publishDialog-publishButton {
+  background-color: #fcecea;
+  font-size: 13px;
+  color: #e33e33;
+  outline:none;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.publishDialog-publishButton:hover {
+  background-color: #EBEEF5;
+}
+.publishDialog-saveButton {
+  background-color: #ffffff;
+  color: #3399ea;
+  font-size: 13px;
+  outline:none;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+}
+.publishDialog-saveButton:hover {
+  background-color: #EBEEF5;
+}
+.publishDialog-cancelButton {
+  background-color: #ffffff;
+  color: #888888;
+  font-size: 13px;
+  outline:none;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+}
+.publishDialog-cancelButton:hover {
+  background-color: #EBEEF5;
+}

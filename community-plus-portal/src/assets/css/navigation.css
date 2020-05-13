@@ -7,6 +7,7 @@
 
 /* 导航栏 */
 .nav-bottom {
+  background-color:#fff;
   height: 44px;
   border: 1px solid #EBEEF5;
   border-radius: 0 0 3px 3px;

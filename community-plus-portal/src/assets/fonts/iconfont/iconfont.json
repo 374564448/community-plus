@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "3383250",
+      "name": "警告",
+      "font_class": "tanjingzhuanhuan",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "6969940",
+      "name": "保存",
+      "font_class": "baocun",
+      "unicode": "e6d0",
+      "unicode_decimal": 59088
+    },
+    {
       "icon_id": "6823243",
       "name": "毛笔",
       "font_class": "maobi",

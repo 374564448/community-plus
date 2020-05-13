@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.messaging.Source;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @auther 半命i 2020/5/1
@@ -32,7 +34,7 @@ public class UserService {
 
     private final UserMapper userMapper;
     private final Source source;
-    //private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     private static final String KEY_PREFIX = "user:checkCode:";
 
@@ -52,8 +54,8 @@ public class UserService {
         msg.put("checkCode",checkCode);
         this.source.output().send(MessageBuilder.withPayload(msg).build());
 
-        //把验证码保存到redis中
-        //this.redisTemplate.opsForValue().set(KEY_PREFIX+accountId,checkCode);
+        //把验证码保存到redis中,5分钟有效
+        this.redisTemplate.opsForValue().set(KEY_PREFIX+accountId,checkCode,5L, TimeUnit.MINUTES);
     }
 
     /**
@@ -128,11 +130,12 @@ public class UserService {
      * @return
      */
     public Integer register(RegisterDTO registerDTO) {
-        //TODO 查询redis比较验证码
-        if (!registerDTO.getCheckCode().equals("111111")) {
+        //查询redis比较验证码
+        String redisCodeKey = KEY_PREFIX + registerDTO.getAccountId();
+        String redisCode = this.redisTemplate.opsForValue().get(redisCodeKey);
+        if (!StringUtils.equals(registerDTO.getCheckCode(),redisCode)) {
             return RegisterRespStatusEnum.CHECK_CODE_ERROR.getStatus();
         }
-
         //根据accountId查询用户
         User user = findUserByAccountId(registerDTO.getAccountId());
         //用户已存在
@@ -140,19 +143,24 @@ public class UserService {
             return RegisterRespStatusEnum.ACCOUNT_BEING.getStatus();
         }
         //创建用户
-        String defaultName = "用户" + UUID.randomUUID().toString().substring(0,5);
+        String defaultName = "用户" + UUID.randomUUID().toString().substring(0,5);//默认昵称
+        String defaultAvatarUrl = "@/assets/images/defaultAvatar.png"; //默认头像
         String password = DigestUtils.md5DigestAsHex(registerDTO.getPassword().getBytes());
         User userRegister = User.builder()
                 .accountId(registerDTO.getAccountId())
                 .accountType(AccountTypeEnum.General.getAccountType())
                 .password(password)
                 .name(defaultName)
+                .avatarUrl(defaultAvatarUrl)
                 .roles("user")
                 .bonus(0)
                 .createTime(new Date())
                 .modifyTime(new Date())
                 .build();
         this.userMapper.insert(userRegister);
+        //最后移除redis的checkCode
+        this.redisTemplate.delete(redisCodeKey);
+
         return  RegisterRespStatusEnum.SUCCESS.getStatus();
     }
 }
