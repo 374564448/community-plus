@@ -20,6 +20,14 @@ export const REGISTER_USER_URL = USER_API_URL + '/register';
 //内容中心
 //分类API路径
 export const CATEGORY_API_URL = BASE_API_URL + '/category';
+//文章API路径
+export const ARTICLE_API_URL = BASE_API_URL + '/article';
+//文章保存路径
+export const ARTICLE_SAVED_API_URL =  ARTICLE_API_URL+ '/save';
+//获取保存文章路径
+export const GET_SAVED_ARTICLE_URL = ARTICLE_API_URL + '/getTheSavedArticle';
+//文章发布路径
+export const ARTICLE_PUBLISH_URL = ARTICLE_API_URL + '/publish';
 
 //云中心
 //上传文件API路径

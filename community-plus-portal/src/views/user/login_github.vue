@@ -24,12 +24,12 @@
         },
       //路由钩子
       //进入此页面前先判断
-      beforeRouteEnter: ((to,from,next) => {
+      beforeRouteEnter: (to,from,next) => {
         //console.log("进入giuhub登录页");
         next(vm => {
           vm.getAccessTokenByCode();
         });
-      }),
+      },
 
       methods :{
           //通过code获取token
@@ -44,7 +44,7 @@
            request({
             method: 'POST',
             url: '/login/githubAccessToken',
-             headers: {
+            headers: {
                'Accept': 'application/json'
             },
             data: {

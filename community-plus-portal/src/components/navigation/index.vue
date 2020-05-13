@@ -245,7 +245,8 @@
                 //userInfo存入vuex
                 this.$store.dispatch('asyncUpdateUser',data);
             }).catch(error => {
-              this.$message.error('服务器异常,暂时无法登录: ' + error);
+              console.log(error);
+              this.$message.error('服务器异常,暂时无法登录!');
             });
           }
         },

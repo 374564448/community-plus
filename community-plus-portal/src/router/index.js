@@ -8,7 +8,6 @@ import register from "../views/user/register";
 import publish from "../views/article/publish";
 
 
-
 // 安装路由
 Vue.use(Router);
 
@@ -36,5 +35,6 @@ export default new Router({
       name: 'publish',
       component: publish
     }
+
   ]
 });

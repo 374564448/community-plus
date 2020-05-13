@@ -45,11 +45,11 @@
         name: "register",
 
       //进入此页面之前先判断
-      beforeRouteEnter: ((to,from,next) => {
+      beforeRouteEnter: (to,from,next) => {
         next(vm => {
           vm.isLogin();
         });
-      }),
+      },
 
         data() {
           //表单验证规则: 邮箱验证
