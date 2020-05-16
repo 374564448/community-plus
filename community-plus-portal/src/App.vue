@@ -8,6 +8,7 @@
 
 <script>
   import Navigation from './components/navigation/index'
+  import "@/assets/fonts/iconfont/iconfont.css";
 export default {
   name: 'App',
   components: {

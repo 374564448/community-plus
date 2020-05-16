@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.io.Serializable;
 
 /**
  * @auther 半命i 2020/5/12
@@ -19,8 +19,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName(value = "article")
-public class Article {
-
+public class Article implements Serializable {
+    private static final long serialVersionUID = -8820885615804786524L;
     /**
      * id
      */
@@ -73,33 +73,33 @@ public class Article {
     private Integer collectionCount;
 
     /**
-     * 是否原创: 0:原创，1: 转载
+     * 是否原创: 1:原创，2: 转载
      */
     private Integer isOriginal;
 
     /**
-     * 审核状态：0: 待审核  1:审核通过 2:审核不通过
+     * 审核状态：1: 待审核  2:审核通过 3:审核不通过
      */
     private Integer auditStatus;
 
     /**
      * 审核不通过原因
      */
-    private String rejectReason;
+    private String reason;
 
     /**
-     *是否公开：0: 公开 1: 私密
+     *是否公开：1: 公开 2: 私密
      */
     private Integer showFlag;
 
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Long createTime;
 
     /**
      * 修改时间
      */
-    private Date modifyTime;
+    private Long modifyTime;
 
 }

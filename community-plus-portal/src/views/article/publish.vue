@@ -7,6 +7,7 @@
       <el-input
         placeholder="文章标题..."
         v-model="articlePublishDTO.title"
+        maxlength="50"
         clearable>
       </el-input>
     </div>
@@ -15,7 +16,6 @@
       <mavon-editor ref=md @imgAdd="$imgAdd" placeholder="文章内容..." v-model="articlePublishDTO.content"  style="min-height: 600px;"/>
     </div>
     <!-- 发布按钮 -->
-    <router-link to="/article/publish/success">qqqq</router-link>
     <div style="user-select:none;margin-left: 1100px">
       <button class="save-button" @click="saveArticle()">
         <i class="iconfont" style="font-size: 16px;">&#xe6d0;</i>&nbsp;保存草稿
@@ -46,7 +46,12 @@
           <div>
             文章分类:&nbsp;
             <el-select size="mini" v-model="articlePublishDTO.categoryId" placeholder="请选择分类">
-              <el-option :key="index" v-for="(i,index) in category" :label="i.name" :value="i.id"/>
+              <el-option :key="index" :label="i.name" v-for="(i,index) in category" :value="i.id">
+                <el-image
+                  style="width: 15px; height: 15px"
+                  :src="i.image"
+                  fit="fill"/>&nbsp;&nbsp;{{i.name}}
+              </el-option>
             </el-select>
           </div>
           <!-- 标签 -->
@@ -80,19 +85,19 @@
           <div style="margin-top: 16px">
             文章类型:&nbsp;
             <el-select size="mini" v-model="articlePublishDTO.isOriginal" placeholder="请选择">
-              <el-option  label="原创" value="0"/>
-              <el-option  label="转载" value="1"/>
+              <el-option label="原创" :value="1"/>
+              <el-option label="转载" :value="2"/>
             </el-select>
           </div>
           <!-- 发布形式 -->
           <div style="margin-top: 16px">
             发布形式:&nbsp;
-            <template>
-              <el-radio v-model="articlePublishDTO.showFlag"  label="0">公开</el-radio>
-              <el-radio v-model="articlePublishDTO.showFlag" label="1">私密</el-radio>
-            </template>
+            <el-radio-group v-model="articlePublishDTO.showFlag">
+              <el-radio :label="1">公开</el-radio>
+              <el-radio :label="2">私密</el-radio>
+            </el-radio-group>
           </div>
-          <div style="margin-top: 25px;margin-left: 147px">
+          <div style="margin-top: 25px;">
             <button class="publishDialog-cancelButton" @click="publishDialogVisible=false">取消</button>
             <button class="publishDialog-saveButton" @click="saveArticle()">保存为草稿</button>
             <button class="publishDialog-publishButton" @click="publish()">发布文章</button>
@@ -141,21 +146,10 @@
             content: '', //内容
             tag: '', //标签
             isOriginal: '', //原创 or 转载
-            showFlag: '0' //公开 or 私密
+            showFlag: 1, //公开 or 私密
           },
-
-
           //分类
-          category: [
-            {
-              id: '1',
-              name: '前端'
-            },
-            {
-              id: '2',
-              name: '后端'
-            }
-          ]
+          category: [],
         }
       },
       methods: {
@@ -273,6 +267,7 @@
             return;
           }
           //请求后台接口保存文章
+          this.articlePublishDTO.tag = this.dynamicTags.join(',');
           request({
             url: ARTICLE_SAVED_API_URL,
             method: 'post',
@@ -282,6 +277,9 @@
               message: '保存成功！您的文章将会被保存七天！',
               type: 'success'
             });
+            if (this.publishDialogVisible) {
+              this.publishDialogVisible = false;
+            }
           }).catch(err => {
             console.log(err);
             this.$message.error('服务器异常，请稍后再试！');
@@ -298,6 +296,9 @@
           }).then(({data}) => {
             if (data) {
               this.articlePublishDTO = data;
+              if (data.tag) {
+                this.dynamicTags = data.tag.split(',');
+              }
             }
           }).catch(err => {
             console.log(err)

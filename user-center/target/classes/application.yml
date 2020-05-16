@@ -24,6 +24,12 @@ spring:
         output:
           #指定topic
           destination: CheckCode-Topic
+        input:
+          #用来指定 topic
+          destination:
+            AddBonus-Topic
+          group:
+            AddBonus-Group
 
   application:
     name: user-center
@@ -39,5 +45,5 @@ mybatis-plus:
 #JWT密钥
 jwt:
   secret: wwwbanmingixyzcommunity-plus123456789abc
-  # 有效期，单位秒，默认2周
-  expire-time-in-second: 1209600
+  # 有效期，单位秒，默认1周
+  expire-time-in-second: 604800

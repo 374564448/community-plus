@@ -16,6 +16,22 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848
+    stream:
+      rocketmq:
+        binder:
+          name-server: 127.0.0.1:9876
+        bindings:
+          output:
+            producer:
+              # 开启支持本地事务
+              transactional: true
+              # @AddBonusTransactionListener(txProducerGroup = "AddBonusTransaction-Group") 相一致
+              group: AddBonusTransaction-Group
+      bindings:
+        output:
+          #用来指定 topic
+          destination:
+            AddBonus-Topic
 
   application:
     name: content-center

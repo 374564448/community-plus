@@ -1,0 +1,143 @@
+.index-box {
+  margin: 40px 160px;
+  color: #888888;
+}
+
+/*分类*/
+.category-box {
+  background-color: #ffffff;
+  padding: 10px 10px 0 10px;
+  border-radius: 5px;
+}
+/*分类列表*/
+.category-list {
+  height: 25px;
+  line-height: 25px;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  font-size: 14px;
+  color: rgba(0,0,0,0.7);
+  text-align: center;
+  cursor: pointer;
+}
+.category-list-click {
+  background-color: rgba(0,0,0,0.3);
+}
+.category-list:hover {
+  background-color: rgba(0,0,0,0.2);
+}
+.category-list:active {
+  background-color: rgba(0,0,0,0.1);
+}
+
+
+/*文章列表*/
+.article-box {
+  margin-top: 20px;
+  border-radius: 5px;
+  padding: 10px 20px;
+  background-color: #fff;
+}
+/*排序方式*/
+.article-sort {
+  display: inline-block;
+  font-size: 13px;
+  padding: 1px 5px;
+  color: rgba(0,0,0,0.7);
+  border-radius: 3px;
+  margin:5px 3px;
+  cursor: pointer;
+  user-select: none;
+}
+.article-sort:hover {
+  background-color: rgba(0,0,0,0.1);
+}
+.article-sort-click {
+  background-color: rgba(0,0,0,0.1);
+}
+/*文章list*/
+.article-list {
+  padding: 10px 0;
+  height: 40px;
+  border-bottom: 1px solid #EBEEF5;
+}
+.article-list-isOriginal {
+  float: left;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  font-size: 12px;
+  margin: 19px 4px 4px 3px;
+  padding: 0 5px;
+  border-radius: 4px;
+  background-color: rgba(0,0,0,0.1);
+}
+.article-list-category-img {
+  float: left;
+  height: 16px;
+  width: 16px;
+  margin: 12px 3px;
+}
+.article-list-title {
+  float: left;
+  height: 18px;
+  line-height: 18px;
+  font-size: 16px;
+  margin: 11px 2px;
+  width: 550px;
+  user-select: none;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
+.article-list-newFlag {
+ display: inline-block;
+  width: 30px;
+  color: #dd4848;
+  font-size: 15px;
+  font-style: italic;
+  margin: 0 5px;
+}
+.article-list-publishTime {
+  float: right;
+  height: 18px;
+  line-height: 18px;
+  font-size: 13px;
+  font-style: italic;
+  margin: 11px;
+  user-select: none;
+}
+.article-list-count {
+  position: relative;
+  bottom: 0;
+}
+.articleCount-style {
+  width: 120px;
+  margin: 0 auto;
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+}
+
+
+/*分页*/
+.pagination-box {
+  margin-top: 20px;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 5px 0;
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+  background-color: #00b5ad;
+  color: #FFF;
+}
+
+/*右边信息栏*/
+.info-box {
+  background-color: #ffffff;
+  height: 30px;
+}
+
+
+

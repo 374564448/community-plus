@@ -5,16 +5,13 @@
     <div class="nav-bottom">
 
       <!-- logo -->
-      <div class="logo">
-        <router-link to="/">
-          <div class="logo-img">
-            <img src="../../assets/images/logo.png" style="width: 38px; height: 38px">
-          </div>
-          <div class="logo-font">
-            CodingUp
-          </div>
-        </router-link>
-
+      <div class="logo" @click="turnToIndex()">
+        <div class="logo-img">
+          <img src="../../assets/images/logo.png" style="width: 38px; height: 38px">
+        </div>
+        <div class="logo-font">
+          CodingUp
+        </div>
       </div>
 
 
@@ -133,10 +130,9 @@
 <script>
 
   import "@/assets/css/navigation.css";
-  import "@/assets/fonts/iconfont/iconfont.css";
   import request from "@/utils/request";
   import { GET_USER_INFO_URL,GENERAL_LOGIN_URL } from '@/utils/api';
-  import {setToken,getToken, removeToken} from "../../utils/auth";
+  import {setToken,getToken, removeToken} from "@/utils/auth";
 
   export default {
         name: "index",
@@ -179,12 +175,31 @@
           this.getUserInfo();
       },
       methods: {
+
+        /**
+         * 调转到首页
+         */
+        turnToIndex() {
+          if (this.$route.path === '/') {
+            location.reload();
+          } else {
+            this.$router.push("/");
+          }
+
+        },
+
+        /**
+         * 关闭页面之前重置表单验证规则的显示
+         * @param done
+         */
         loginDialogBeforeClose(done) {
           this.$refs['loginForm'].resetFields();
           done();
         },
 
-        //账号密码登录
+        /**
+         * 账号密码登录
+         */
         generalLogin() {
           // 为表单绑定验证功能
           this.$refs['loginForm'].validate((valid) => {
@@ -195,8 +210,6 @@
                 url: GENERAL_LOGIN_URL,
                 data: this.generalLoginDTO
               }).then(({data}) =>{
-
-                console.log(data);
                 //token存入localStore
                 setToken(data.token);
                 //用户信息存入vuex
@@ -224,6 +237,11 @@
             }
           });
         },
+
+        /**
+         * 第三方登录
+         * @param mode
+         */
         otherLogin(mode) {
           //GitHub登录
           if (mode === 'GitHub') {
@@ -236,7 +254,9 @@
           }
         },
 
-        //获取用户信息
+        /**
+         * 获取用户信息
+         */
         getUserInfo() {
           //判断token是否过期
           if (getToken() &&getToken().expirationTime - new Date().getTime() > 0) {
@@ -251,7 +271,9 @@
           }
         },
 
-        //退出登录
+        /**
+         * 退出登录
+         */
         logout() {
           this.$confirm('你确定要退出登录吗?', {
             confirmButtonText: '确定',

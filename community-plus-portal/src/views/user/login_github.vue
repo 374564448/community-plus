@@ -79,7 +79,8 @@
             this.gitHubLogin(this.githubLoginDTO);
 
           }).catch(error => {
-            this.$message.error('网络异常,暂时无法登录: ' + error);
+            console.log(error);
+            this.$message.error('网络异常,暂时无法登录');
             this.$router.push("/");
           });
         },
@@ -103,7 +104,12 @@
               });
               //跳转首页
               this.$router.push("/")
+            }).then(err => {
+              console.log(err);
+              this.$message.error('网络异常,暂时无法登录');
+              this.$router.push("/");
             })
+
         }
       }
     }

@@ -1,4 +1,4 @@
-package com.banmingi.communityplus.smscenter.listener;
+package com.banmingi.communityplus.smscenter.rocketmq;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +17,12 @@ import java.util.Map;
 
 /**
  * @auther 半命i 2020/5/9
- * @description
+ * @description 从rockemq获取消息并消费.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class SMSListener {
+public class SMSConsumer {
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
@@ -30,6 +30,10 @@ public class SMSListener {
     @Value("${spring.mail.username}")
     private String username;
 
+    /**
+     * 生成发送验证码的html模板,发送到指定的邮箱.
+     * @param msg
+     */
     @StreamListener(Sink.INPUT)
     public void sendCheckCode(Map<String,String> msg) {
         String accountId = msg.get("accountId");

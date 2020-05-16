@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.io.Serializable;
 
 /**
  * @auther 半命i 2020/5/1
@@ -19,8 +19,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName(value = "user")
-public class User {
-
+public class User implements Serializable {
+    private static final long serialVersionUID = 2655021682900298592L;
     /**
      * id
      */
@@ -70,11 +70,11 @@ public class User {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Long createTime;
 
     /**
      * 修改时间
      */
-    private Date modifyTime;
+    private Long modifyTime;
 
 }

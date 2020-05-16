@@ -3,12 +3,16 @@ package com.banmingi.communityplus.usercenter.service;
 import com.banmingi.communityplus.usercenter.dto.GeneralLoginDTO;
 import com.banmingi.communityplus.usercenter.dto.GitHubLoginDTO;
 import com.banmingi.communityplus.usercenter.dto.RegisterDTO;
+import com.banmingi.communityplus.usercenter.dto.UserAddBonusMsgDTO;
+import com.banmingi.communityplus.usercenter.entity.BonusEventLog;
 import com.banmingi.communityplus.usercenter.entity.User;
 import com.banmingi.communityplus.usercenter.enums.AccountTypeEnum;
 import com.banmingi.communityplus.usercenter.enums.RegisterRespStatusEnum;
+import com.banmingi.communityplus.usercenter.mapper.BonusEventLogMapper;
 import com.banmingi.communityplus.usercenter.mapper.UserMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +20,9 @@ import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,10 +33,12 @@ import java.util.concurrent.TimeUnit;
  * @description
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserService {
 
     private final UserMapper userMapper;
+    private final BonusEventLogMapper bonusEventLogMapper;
     private final Source source;
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -90,14 +96,14 @@ public class UserService {
             userSave.setAccountType(AccountTypeEnum.GitHub.getAccountType());
             userSave.setRoles("user");
             userSave.setBonus(0);
-            userSave.setCreateTime(new Date());
-            userSave.setModifyTime(new Date());
+            userSave.setCreateTime(System.currentTimeMillis());
+            userSave.setModifyTime(System.currentTimeMillis());
             this.userMapper.insert(userSave);
 
             return userSave;
         }
         //否则把数据库中的用户返回
-        user.setModifyTime(new Date());
+        user.setModifyTime(System.currentTimeMillis());
         this.userMapper.updateById(user);
 
         return user;
@@ -154,13 +160,35 @@ public class UserService {
                 .avatarUrl(defaultAvatarUrl)
                 .roles("user")
                 .bonus(0)
-                .createTime(new Date())
-                .modifyTime(new Date())
+                .createTime(System.currentTimeMillis())
+                .modifyTime(System.currentTimeMillis())
                 .build();
         this.userMapper.insert(userRegister);
         //最后移除redis的checkCode
         this.redisTemplate.delete(redisCodeKey);
 
         return  RegisterRespStatusEnum.SUCCESS.getStatus();
+    }
+
+
+    /**
+     * 为用户添加积分、记录日志
+     * @param userAddBonusMsgDTO 积分添加的实体信息
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void addBonus(UserAddBonusMsgDTO userAddBonusMsgDTO) {
+        //1. 为用户添加积分
+        Integer userId = userAddBonusMsgDTO.getUserId();
+        Integer bonus = userAddBonusMsgDTO.getBonus();
+        User user = this.userMapper.selectById(userId);
+        user.setBonus(user.getBonus() + bonus);
+        this.userMapper.updateById(user);
+
+        //2. 记录日志到bonus_event_log 里面
+        BonusEventLog bonusEventLog = new BonusEventLog();
+        BeanUtils.copyProperties(userAddBonusMsgDTO,bonusEventLog);
+        bonusEventLog.setCreateTime(System.currentTimeMillis());
+        this.bonusEventLogMapper.insert(bonusEventLog);
+        log.info("积分添加完毕");
     }
 }

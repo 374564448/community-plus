@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * @auther 半命i 2020/5/1
  * @description
@@ -13,7 +15,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRespDTO {
+public class UserRespDTO implements Serializable {
+    private static final long serialVersionUID = -8606603115110224525L;
     /**
      * id
      */
