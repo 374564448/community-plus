@@ -10,9 +10,10 @@
     <properties>
         <spring-cloud.version>Greenwich.SR3</spring-cloud.version>
         <spring-cloud-alibaba.version>2.1.0.RELEASE</spring-cloud-alibaba.version>
-        <mybatis-plus.version>3.3.1.tmp</mybatis-plus.version>
+        <mybatis-plus.version>3.3.1</mybatis-plus.version>
         <okhttp3.version>4.6.0</okhttp3.version>
         <aliyun-OSS.version>3.9.1</aliyun-OSS.version>
+        <pahehelper.version>1.2.13</pahehelper.version>
     </properties>
 
     <licenses>
@@ -57,6 +58,11 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pahehelper.version}</version>
             </dependency>
 
 

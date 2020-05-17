@@ -2,16 +2,22 @@ package com.banmingi.communityplus.contentcenter.service;
 
 import com.alibaba.fastjson.JSON;
 import com.banmingi.communityplus.contentcenter.dto.ArticleAuditDTO;
+import com.banmingi.communityplus.contentcenter.dto.ArticleListDTO;
 import com.banmingi.communityplus.contentcenter.dto.ArticlePublishDTO;
 import com.banmingi.communityplus.contentcenter.dto.UserAddBonusMsgDTO;
 import com.banmingi.communityplus.contentcenter.entity.Article;
 import com.banmingi.communityplus.contentcenter.entity.RocketMQTransactionLog;
 import com.banmingi.communityplus.contentcenter.enums.ArticleAddBonusValueEnum;
+import com.banmingi.communityplus.contentcenter.enums.ArticleSortEnum;
 import com.banmingi.communityplus.contentcenter.enums.ArticleStatusEnum;
 import com.banmingi.communityplus.contentcenter.mapper.ArticleMapper;
 import com.banmingi.communityplus.contentcenter.mapper.RocketMQTransactionLogMapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +28,10 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @auther 半命i 2020/5/13
@@ -116,8 +124,10 @@ public class ArticleService {
                     //header中传的对象,在get的时候拿到的是字符串,所以我们把对象转换成Json字符串
                     .setHeader("articleAuditDTO", JSON.toJSONString(articleAuditDTO))
                     .build();
-            //推送消息给rocketmq
+            //推送消息给rocketmq,为用户添加积分
             this.source.output().send(message);
+
+            //把文章添加
         } else {
             //如果是REJECT(审核不通过),直接更新数据库中文章的状态即可
             this.auditInDB(id,articleAuditDTO);
@@ -154,5 +164,70 @@ public class ArticleService {
                 .transactionId(transactionId)
                 .log("审核文章,并为发布者添加积分...")
                 .build());
+    }
+
+    /**
+     *
+     * @param search 搜索条件
+     * @param categoryId 分类
+     * @param sort 排序方式
+     * @param pageNo 页号
+     * @param pageSize 一页的文章条数
+     * @return 文章列表
+     */
+    public PageInfo<ArticleListDTO> q(String search, Integer categoryId, String sort, Integer pageNo, Integer pageSize) {
+        //分页
+        //切入下面不分页的SQL,自动拼接分页的SQL
+        PageHelper.startPage(pageNo,pageSize);
+        QueryWrapper<Article> wrapper = new QueryWrapper<>();
+
+        //搜寻条件不为空
+        if (StringUtils.isNotBlank(search)) {
+            wrapper.like("title",search);
+        }
+        //分类查询不为空
+        if (categoryId != null) {
+            wrapper.eq("category_id",categoryId);
+        }
+
+        //排序方式
+        for (ArticleSortEnum articleSortEnum : ArticleSortEnum.values()) {
+            if (articleSortEnum.name().toLowerCase().equals(sort)) {
+                //最新文章排序
+                if (articleSortEnum == ArticleSortEnum.NEW) {
+                    wrapper.orderByDesc("modify_time");
+                }
+                //最热文章排序(根据浏览数)
+                if (articleSortEnum == ArticleSortEnum.HOT) {
+                    wrapper.orderByDesc("view_count","modify_time");
+                }
+                //根据点赞数排序
+                if (articleSortEnum == ArticleSortEnum.COMMENT) {
+                    wrapper.orderByDesc("like_count","modify_time");
+                }
+                //根据评论数排序
+                if (articleSortEnum == ArticleSortEnum.COMMENT) {
+                    wrapper.orderByDesc("comment_count","modify_time");
+                }
+                //根据收藏数排序
+                if (articleSortEnum == ArticleSortEnum.COLLECTION) {
+                    wrapper.orderByDesc("collection_count","modify_time");
+                }
+                break;
+            }
+        }
+        //根据条件查询结果
+        List<Article> articleList = this.articleMapper.selectList(wrapper);
+
+        //构建返回结果
+
+        List<ArticleListDTO> articleListDTOList = articleList.stream().map(article -> {
+            ArticleListDTO articleListDTO = new ArticleListDTO();
+            BeanUtils.copyProperties(article, articleListDTO);
+            return articleListDTO;
+        }).collect(Collectors.toList());
+
+
+        return new  PageInfo<ArticleListDTO>(articleListDTOList);
     }
 }

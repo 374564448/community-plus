@@ -8,12 +8,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName(value = "bonus_event_log")
-public class BonusEventLog {
+public class BonusEventLog implements Serializable {
+    private static final long serialVersionUID = 1430342229827556608L;
     /**
      * Id
      */

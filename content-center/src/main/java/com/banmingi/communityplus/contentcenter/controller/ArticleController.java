@@ -1,11 +1,14 @@
 package com.banmingi.communityplus.contentcenter.controller;
 
+import com.banmingi.communityplus.contentcenter.dto.ArticleListDTO;
 import com.banmingi.communityplus.contentcenter.dto.ArticlePublishDTO;
 import com.banmingi.communityplus.contentcenter.service.ArticleService;
+import com.github.pagehelper.PageInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +26,30 @@ import org.springframework.web.bind.annotation.RestController;
 public class ArticleController {
 
     private final ArticleService articleService;
+
+    /**
+     *
+     * @param search 搜索条件
+     * @param categoryId 分类
+     * @param sort 排序方式
+     * @param pageNo 页号
+     * @param pageSize 一页的文章条数
+     * @return 文章列表
+     */
+    @GetMapping("/q")
+    public ResponseEntity<PageInfo<ArticleListDTO>> q(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false,defaultValue = "new") String sort,
+            @RequestParam(required = false,defaultValue = "1") Integer pageNo,
+            @RequestParam(required = false,defaultValue = "10") Integer pageSize) {
+        PageInfo<ArticleListDTO> articleList = this.articleService.q(search,categoryId,sort,pageNo,pageSize);
+        if (CollectionUtils.isEmpty(articleList.getList())) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(articleList);
+    }
+
     /**
      * 发布文章.
      * @return
@@ -34,8 +61,8 @@ public class ArticleController {
     }
 
     /**
-     * 保存文章 暂时保存7天
-     * @param articlePublishDTO
+     * 保存文章 暂时保存7天.
+     * @param articlePublishDTO 文章发布实体
      * @return
      */
     @PostMapping("/save")

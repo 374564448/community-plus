@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * @auther 半命i 2020/4/18
  * @description
@@ -13,7 +15,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAddBonusMsgDTO {
+public class UserAddBonusMsgDTO implements Serializable {
+    private static final long serialVersionUID = -3004510872050979434L;
     /**
      * 为谁加积分
      */

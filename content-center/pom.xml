@@ -78,6 +78,12 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
         </dependency>
 
+        <!-- 工具 -->
+        <!--page helper -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+        </dependency>
         <!-- 自定义工具包-->
         <dependency>
             <groupId>com.banmingi.community-plus</groupId>

@@ -9,12 +9,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName(value = "rocketmq_transaction_log")
-public class RocketMQTransactionLog {
+public class RocketMQTransactionLog implements Serializable {
+
+    private static final long serialVersionUID = 2343070443039843533L;
     /**
      * id
      */

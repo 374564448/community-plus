@@ -26,7 +26,7 @@
           <!-- 排序方式-->
           <div style="border-bottom: 2px solid #E4E7ED">
             <div v-bind:class="['article-sort',{'article-sort-click':sortBoxIndex===index}]"
-                 :key="index" v-for="(i,index) in articleSort" @click="sortArticleList(index,i)">{{i}}
+                 :key="index" v-for="(i,index) in articleSort" @click="sortArticleList(index,i.value)">{{i.name}}
             </div>
           </div>
           <!-- 文章list-->
@@ -123,7 +123,14 @@
 
         test: 1589472620622,
         //文章排序
-        articleSort: ['最新','最热','阅览', '点赞', '评论', '收藏', '关注'],
+        articleSort: [
+          {name: '最新', value: 'new'},
+          {name: '最热', value: 'hot'},
+          {name: '点赞', value: 'like'},
+          {name: '评论', value: 'comment'},
+          {name: '收藏', value: 'collection'},
+          {name: '我的关注', value: 'myFocus'},
+          ],
 
         //分类
         category: [],
