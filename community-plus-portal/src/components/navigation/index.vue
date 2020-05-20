@@ -17,7 +17,7 @@
 
       <!-- 搜索框 -->
       <div class="search">
-        <el-input size="small" placeholder="搜索..."/>
+        <el-input size="small" v-model="search" @keyup.enter.native="searchArticle()" placeholder="搜索..."/>
       </div>
 
 
@@ -145,6 +145,10 @@
               accountId: '',
               password: ''
             },
+
+            //搜索条件
+            search: '',
+
             // 表单验证，需要在 el-form-item 元素中增加 prop 属性
             rules: {
 
@@ -176,16 +180,15 @@
       },
       methods: {
 
+        searchArticle() {
+          window.location.href = "/?search=" + this.search;
+        },
+
         /**
          * 调转到首页
          */
         turnToIndex() {
-          if (this.$route.path === '/') {
-            location.reload();
-          } else {
-            this.$router.push("/");
-          }
-
+          window.location.href = "/";
         },
 
         /**

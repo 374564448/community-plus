@@ -6,7 +6,7 @@ import com.banmingi.communityplus.usercenter.dto.GitHubLoginDTO;
 import com.banmingi.communityplus.usercenter.dto.JwtTokenRespDTO;
 import com.banmingi.communityplus.usercenter.dto.LoginRespDTO;
 import com.banmingi.communityplus.usercenter.dto.RegisterDTO;
-import com.banmingi.communityplus.usercenter.dto.UserRespDTO;
+import com.banmingi.communityplus.usercenter.dto.UserDTO;
 import com.banmingi.communityplus.usercenter.entity.User;
 import com.banmingi.communityplus.usercenter.service.UserService;
 import io.jsonwebtoken.Claims;
@@ -82,7 +82,7 @@ public class UserController {
         //颁发token
         String token = getToken(user);
         //构建响应
-        UserRespDTO userRespDTO = new UserRespDTO();
+        UserDTO userRespDTO = new UserDTO();
         BeanUtils.copyProperties(user,userRespDTO);
         LoginRespDTO loginRespDTO = LoginRespDTO.builder()
                 .user(userRespDTO)
@@ -111,11 +111,11 @@ public class UserController {
         String token = getToken(user);
 
         //构建响应
-        UserRespDTO userRespDTO = new UserRespDTO();
-        BeanUtils.copyProperties(user,userRespDTO);
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user,userDTO);
 
         LoginRespDTO loginRespDTO = LoginRespDTO.builder()
-                .user(userRespDTO)
+                .user(userDTO)
                 .token(
                         JwtTokenRespDTO.builder()
                                 .token(token)
@@ -141,17 +141,19 @@ public class UserController {
     }
 
     /**
-     * 根据id查询用户
+     * 根据id查询用户信息
      * @param id
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Integer id) {
+    public ResponseEntity<UserDTO> findById(@PathVariable Integer id) {
         User user = this.userService.findById(id);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(user);
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user,userDTO);
+        return ResponseEntity.ok(userDTO);
     }
 
 
@@ -160,7 +162,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/userInfo")
-    public ResponseEntity<UserRespDTO> getUserInfo(HttpServletRequest request) {
+    public ResponseEntity<UserDTO> getUserInfo(HttpServletRequest request) {
         //1. 获取token
         String token = request.getHeader("X-Token");
 
@@ -179,10 +181,9 @@ public class UserController {
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
-
-        UserRespDTO userRespDTO = new UserRespDTO();
-        BeanUtils.copyProperties(user,userRespDTO);
-        return ResponseEntity.ok(userRespDTO);
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user,userDTO);
+        return ResponseEntity.ok(userDTO);
     }
 
 }

@@ -53,7 +53,7 @@
               code: code
             }
           }).then(resp =>{
-            console.log(resp.data.access_token)
+             console.log(resp.data.access_token)
              this.getUserInfoByAccessToken(resp.data.access_token)
            })
 
@@ -73,8 +73,7 @@
             this.githubLoginDTO.avatarUrl = data.avatar_url;
             this.githubLoginDTO.bio = data.bio;
 
-            //console.log(this.userInfo);
-
+            console.log(this.userInfo);
             //用户信息存入后台并返回token
             this.gitHubLogin(this.githubLoginDTO);
 

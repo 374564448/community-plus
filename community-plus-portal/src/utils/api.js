@@ -28,6 +28,8 @@ export const ARTICLE_SAVED_API_URL =  ARTICLE_API_URL+ '/save';
 export const GET_SAVED_ARTICLE_URL = ARTICLE_API_URL + '/getTheSavedArticle';
 //文章发布路径
 export const ARTICLE_PUBLISH_URL = ARTICLE_API_URL + '/publish';
+//分页 & 条件 获取文章列表路径
+export const ARTICLE_LIST_URL = ARTICLE_API_URL + '/q';
 
 //云中心
 //上传文件API路径

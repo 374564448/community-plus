@@ -10,7 +10,9 @@ import com.banmingi.communityplus.contentcenter.entity.RocketMQTransactionLog;
 import com.banmingi.communityplus.contentcenter.enums.ArticleAddBonusValueEnum;
 import com.banmingi.communityplus.contentcenter.enums.ArticleSortEnum;
 import com.banmingi.communityplus.contentcenter.enums.ArticleStatusEnum;
+import com.banmingi.communityplus.contentcenter.feignclient.UserFeignClient;
 import com.banmingi.communityplus.contentcenter.mapper.ArticleMapper;
+import com.banmingi.communityplus.contentcenter.mapper.CategoryMapper;
 import com.banmingi.communityplus.contentcenter.mapper.RocketMQTransactionLogMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
@@ -44,10 +46,14 @@ public class ArticleService {
 
     private final ArticleMapper articleMapper;
     private final RocketMQTransactionLogMapper rocketMQTransactionLogMapper;
+    private final CategoryMapper categoryMapper;
     private final RedisTemplate<String,Object> redisTemplate;
+    private final UserFeignClient userFeignClient;
     private final Source source;
 
     private static final String ARTICLE_SAVE_KEY = "article:save:";
+
+
 
     /**
      * 发布或编辑文章
@@ -124,7 +130,7 @@ public class ArticleService {
                     //header中传的对象,在get的时候拿到的是字符串,所以我们把对象转换成Json字符串
                     .setHeader("articleAuditDTO", JSON.toJSONString(articleAuditDTO))
                     .build();
-            //推送消息给rocketmq,为用户添加积分
+            //推送消息给rocketMq,为用户添加积分
             this.source.output().send(message);
 
             //把文章添加
@@ -171,16 +177,13 @@ public class ArticleService {
      * @param search 搜索条件
      * @param categoryId 分类
      * @param sort 排序方式
-     * @param pageNo 页号
+     * @param pageNum 页号
      * @param pageSize 一页的文章条数
      * @return 文章列表
      */
-    public PageInfo<ArticleListDTO> q(String search, Integer categoryId, String sort, Integer pageNo, Integer pageSize) {
-        //分页
-        //切入下面不分页的SQL,自动拼接分页的SQL
-        PageHelper.startPage(pageNo,pageSize);
+    public PageInfo<ArticleListDTO> q(String search, Integer categoryId, String sort, Integer pageNum, Integer pageSize) {
+        //构建查询条件
         QueryWrapper<Article> wrapper = new QueryWrapper<>();
-
         //搜寻条件不为空
         if (StringUtils.isNotBlank(search)) {
             wrapper.like("title",search);
@@ -189,7 +192,6 @@ public class ArticleService {
         if (categoryId != null) {
             wrapper.eq("category_id",categoryId);
         }
-
         //排序方式
         for (ArticleSortEnum articleSortEnum : ArticleSortEnum.values()) {
             if (articleSortEnum.name().toLowerCase().equals(sort)) {
@@ -202,7 +204,7 @@ public class ArticleService {
                     wrapper.orderByDesc("view_count","modify_time");
                 }
                 //根据点赞数排序
-                if (articleSortEnum == ArticleSortEnum.COMMENT) {
+                if (articleSortEnum == ArticleSortEnum.LIKE) {
                     wrapper.orderByDesc("like_count","modify_time");
                 }
                 //根据评论数排序
@@ -216,18 +218,37 @@ public class ArticleService {
                 break;
             }
         }
+
+        //分页
+        //切入下面不分页的SQL,自动拼接分页的SQL
+        PageHelper.startPage(pageNum,pageSize);
         //根据条件查询结果
         List<Article> articleList = this.articleMapper.selectList(wrapper);
 
-        //构建返回结果
+        /*
+          因为PageHelper针对的分页是切入数据库的物理分页,这里只能对Article进行分页,但想要的返回结果是ArticleListDTO，
+          所以现在这里获取到PageInfo<Article>的分页属性,然后再在下面从新赋值给PageInfo<ArticleListDTO>
+         */
+        PageInfo<Article> articlePageInfo = new PageInfo<>(articleList);
 
+        //构建返回结果
         List<ArticleListDTO> articleListDTOList = articleList.stream().map(article -> {
             ArticleListDTO articleListDTO = new ArticleListDTO();
             BeanUtils.copyProperties(article, articleListDTO);
+            //用户头像
+            String avatarUrl = this.userFeignClient.findById(articleListDTO.getUserId()).getAvatarUrl();
+            articleListDTO.setAvatarUrl(avatarUrl);
+            //分类图片
+            String categoryImage = this.categoryMapper.selectById(articleListDTO.getCategoryId()).getImage();
+            articleListDTO.setCategoryImage(categoryImage);
             return articleListDTO;
         }).collect(Collectors.toList());
 
+        //PageInfo<Article> --> PageInfo<ArticleListDTO>
+        PageInfo<ArticleListDTO> articleListDTOPageInfo = new PageInfo<>();
+        BeanUtils.copyProperties(articlePageInfo,articleListDTOPageInfo);
+        articleListDTOPageInfo.setList(articleListDTOList);
 
-        return new  PageInfo<ArticleListDTO>(articleListDTOList);
+        return articleListDTOPageInfo;
     }
 }

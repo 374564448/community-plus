@@ -3,6 +3,7 @@ const user = {
   state: sessionStorage.getItem('userState') ? JSON.parse(sessionStorage.getItem('userState')) : {
     user: {
       id: '',
+      accountType: '',
       name: '',
       avatarUrl: '',
       bio: '',

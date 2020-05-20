@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +31,7 @@ public class ArticleController {
      * @param search 搜索条件
      * @param categoryId 分类
      * @param sort 排序方式
-     * @param pageNo 页号
+     * @param pageNum 页号
      * @param pageSize 一页的文章条数
      * @return 文章列表
      */
@@ -41,18 +40,16 @@ public class ArticleController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false,defaultValue = "new") String sort,
-            @RequestParam(required = false,defaultValue = "1") Integer pageNo,
+            @RequestParam(required = false,defaultValue = "1") Integer pageNum,
             @RequestParam(required = false,defaultValue = "10") Integer pageSize) {
-        PageInfo<ArticleListDTO> articleList = this.articleService.q(search,categoryId,sort,pageNo,pageSize);
-        if (CollectionUtils.isEmpty(articleList.getList())) {
-            return ResponseEntity.notFound().build();
-        }
+        PageInfo<ArticleListDTO> articleList = this.articleService.q(search,categoryId,sort,pageNum,pageSize);
+
         return ResponseEntity.ok(articleList);
     }
 
     /**
      * 发布文章.
-     * @return
+     * @return 成功
      */
     @PostMapping("/publish")
     public ResponseEntity<Void> publish(@RequestBody ArticlePublishDTO articlePublishDTO) {
@@ -63,7 +60,7 @@ public class ArticleController {
     /**
      * 保存文章 暂时保存7天.
      * @param articlePublishDTO 文章发布实体
-     * @return
+     * @return 成功
      */
     @PostMapping("/save")
     public ResponseEntity<Void> save(@RequestBody ArticlePublishDTO articlePublishDTO) {
@@ -73,8 +70,8 @@ public class ArticleController {
 
     /**
      * 获取保存的文章
-     * @param userId
-     * @return
+     * @param userId 用户id
+     * @return 返回保存的文章
      */
     @GetMapping("/getTheSavedArticle")
     public ResponseEntity<ArticlePublishDTO> getTheSavedArticle(@RequestParam("userId") Integer userId) {

@@ -25,5 +25,5 @@ public class LoginRespDTO implements Serializable {
     /**
      * 用户信息
      */
-    private UserRespDTO user;
+    private UserDTO user;
 }

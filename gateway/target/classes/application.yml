@@ -27,7 +27,7 @@ spring:
           uri: lb://content-center
           predicates:
             # 路径匹配
-            - Path=/category/**,/article/**
+            - Path=/category/**,/article/**,/admin/article/**
         #云中心
         - id: CLOUD-CENTER
           uri: lb://cloud-center

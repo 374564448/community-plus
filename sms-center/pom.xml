@@ -73,7 +73,7 @@
         <!-- 自定义工具包-->
         <dependency>
             <groupId>com.banmingi.community-plus</groupId>
-            <artifactId>commons-utils</artifactId>
+            <artifactId>common-utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

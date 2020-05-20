@@ -44,6 +44,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- spring cloud -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
         <!-- spirng cloud alibaba-->
         <!-- nacos -->
         <dependency>
@@ -87,7 +93,7 @@
         <!-- 自定义工具包-->
         <dependency>
             <groupId>com.banmingi.community-plus</groupId>
-            <artifactId>commons-utils</artifactId>
+            <artifactId>common-utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

@@ -5,7 +5,6 @@ import com.banmingi.communityplus.contentcenter.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,9 +29,6 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<Category>> queryAllCategory() {
         List<Category> categoryList = this.categoryService.queryAllCategory();
-        if (CollectionUtils.isEmpty(categoryList)) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(categoryList);
     }
 }

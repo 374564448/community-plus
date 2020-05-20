@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "3892518",
+      "name": "没有数据",
+      "font_class": "meiyoushuju",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
       "icon_id": "2833397",
       "name": "人生指南",
       "font_class": "renshengzhinan",
