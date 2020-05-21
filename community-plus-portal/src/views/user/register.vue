@@ -87,7 +87,9 @@
           }
         },
       methods: {
-        //判断是否已经登录,若已登录,则不能使用注册功能
+        /**
+         * 判断是否已经登录,若已登录,则不能使用注册功能
+         */
         isLogin() {
           const isLogin = this.$store.getters.getUser.id;
           if (isLogin) {
@@ -95,7 +97,9 @@
           }
         },
 
-        //发送验证码倒计时
+        /**
+         * 发送验证码倒计时
+         */
        isSendCode() {
          const TIME_COUNT = 60;
          if (!this.sendCodeTimer) {
@@ -113,7 +117,9 @@
            }, 1000)
          }
        },
-        //发送验证码
+        /**
+         * 发送验证码
+         */
         sendCheckCode() {
           if (!(/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/.test(this.registerDTO.accountId))) {
             this.$message({
@@ -137,7 +143,10 @@
             this.$message.error('服务器异常，请稍后再试！');
           });
         },
-        //注册
+
+        /**
+         * 注册
+         */
         register() {
           // 为表单绑定验证功能
           this.$refs['registerForm'].validate((valid) => {
@@ -160,7 +169,6 @@
                     message: '注册成功！',
                     type: 'success'
                   });
-
                   //跳转首页
                   this.$router.push("/")
                 }).catch(err => {

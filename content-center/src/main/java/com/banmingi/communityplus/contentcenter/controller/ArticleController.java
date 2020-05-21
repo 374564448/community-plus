@@ -1,5 +1,6 @@
 package com.banmingi.communityplus.contentcenter.controller;
 
+import com.banmingi.communityplus.contentcenter.dto.ArticleDTO;
 import com.banmingi.communityplus.contentcenter.dto.ArticleListDTO;
 import com.banmingi.communityplus.contentcenter.dto.ArticlePublishDTO;
 import com.banmingi.communityplus.contentcenter.service.ArticleService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,20 @@ public class ArticleController {
     private final ArticleService articleService;
 
     /**
+     * 文件文章id查找文章
+     * @param id 文章id
+     * @return 文章详情实体
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<ArticleDTO> findById(@PathVariable Integer id) {
+        ArticleDTO articleDTO = this.articleService.findById(id);
+        if (articleDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(articleDTO);
+    }
+
+    /**
      *
      * @param search 搜索条件
      * @param categoryId 分类
@@ -41,7 +57,7 @@ public class ArticleController {
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false,defaultValue = "new") String sort,
             @RequestParam(required = false,defaultValue = "1") Integer pageNum,
-            @RequestParam(required = false,defaultValue = "10") Integer pageSize) {
+            @RequestParam(required = false,defaultValue = "3") Integer pageSize) {
         PageInfo<ArticleListDTO> articleList = this.articleService.q(search,categoryId,sort,pageNum,pageSize);
 
         return ResponseEntity.ok(articleList);

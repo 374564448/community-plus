@@ -150,7 +150,8 @@ public class UserService {
         }
         //创建用户
         String defaultName = "用户" + UUID.randomUUID().toString().substring(0,5);//默认昵称
-        String defaultAvatarUrl = "@/assets/images/defaultAvatar.png"; //默认头像
+        String defaultAvatarUrl
+                = "http://banmingi-community-plus.oss-cn-qingdao.aliyuncs.com/fcec0af8-a8b8-462b-af32-90ca9a0b877e.png"; //默认头像
         String password = DigestUtils.md5DigestAsHex(registerDTO.getPassword().getBytes());
         User userRegister = User.builder()
                 .accountId(registerDTO.getAccountId())

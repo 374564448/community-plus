@@ -55,8 +55,8 @@
                   fit="fill"/>
               </div>
               <!-- 文章标题 -->
-              <div class="article-list-title">{{i.title}}
-                <div class="article-list-newFlag" v-if="new Date().getTime()-i.modifyTime<604800000">new</div>
+              <div class="article-list-title" @click="articleDetail(i.id)">{{i.title}}
+                <div class="article-list-newFlag" v-if="new Date().getTime()-i.modifyTime<259200000">new</div>
               </div>
               <!-- 阅览、点赞、评论等-->
 
@@ -106,7 +106,15 @@
 
       <!-- 右边信息栏 -->
       <el-col :span="6">
-        <div class="info-box"></div>
+        <div class="info-box">
+          <div class="edit-myInfo">
+            <div style="float:left; height: 48px;width: 48px;border:1px solid #C0C4CC;border-radius: 5px;cursor: pointer">
+              <img :src="avatarUrl" style="margin: 2px; height: 42px;width: 42px;border:1px solid #E4E7ED;border-radius: 5px"/>
+            </div>
+            <div class="myInfo-name">{{name}}</div>
+            <div class="edit-button"><i class="iconfont" style="font-size: 13px;color: rgba(0,181,173,0.7);">&#xe66d;编辑</i></div>
+          </div>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -123,6 +131,21 @@
     mounted() {
       this.getAllCategory();
       this.searchArticleList(this.$route.query.search);
+    },
+
+    computed: {
+      /**
+       * 个人信息
+       */
+      userId() {
+        return this.$store.getters.getUser.id;
+      },
+      avatarUrl() {
+        return this.$store.getters.getUser.avatarUrl;
+      },
+      name() {
+        return this.$store.getters.getUser.name;
+      }
     },
 
     data() {
@@ -212,8 +235,6 @@
 
         //初始化当前页为第一页
         this.articleListDTO.pageNum = 1;
-        //文章搜索条件
-        this.articleListDTO.search = "";
         //文章排序方式
         this.articleListDTO.sort = sort;
         this.getArticleList(this.articleListDTO);
@@ -233,6 +254,13 @@
         this.articleListDTO.search = search;
         this.getArticleList(this.articleListDTO)
       },
+
+      /**
+       * 文章详情页
+       */
+      articleDetail(id) {
+        this.$router.push({ name: 'article', params: {id: id}})
+      }
 
     }
 

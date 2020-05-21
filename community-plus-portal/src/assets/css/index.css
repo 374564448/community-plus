@@ -138,8 +138,35 @@
 /*右边信息栏*/
 .info-box {
   background-color: #ffffff;
-  height: 30px;
+  border-radius: 5px;
 }
-
-
+.edit-myInfo {
+  padding: 5px 15px;
+  height: 50px;
+  user-select: none;
+}
+.edit-myInfo .myInfo-name {
+  float: left;
+  margin-left: 5px;
+  height: 50px;
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 50px;
+  cursor: pointer;
+}
+.myInfo-name:hover {
+  text-decoration:underline;
+}
+.edit-myInfo .edit-button {
+  margin-left: 12px;
+  float: left;
+  font-size: 13px;
+  height: 50px;
+  line-height: 50px;
+  cursor: pointer;
+}
+.edit-button:hover {
+  text-decoration:underline;
+}
 

@@ -2,10 +2,13 @@ package com.banmingi.communityplus.contentcenter.service;
 
 import com.alibaba.fastjson.JSON;
 import com.banmingi.communityplus.contentcenter.dto.ArticleAuditDTO;
+import com.banmingi.communityplus.contentcenter.dto.ArticleDTO;
 import com.banmingi.communityplus.contentcenter.dto.ArticleListDTO;
 import com.banmingi.communityplus.contentcenter.dto.ArticlePublishDTO;
 import com.banmingi.communityplus.contentcenter.dto.UserAddBonusMsgDTO;
+import com.banmingi.communityplus.contentcenter.dto.usercenter.UserDTO;
 import com.banmingi.communityplus.contentcenter.entity.Article;
+import com.banmingi.communityplus.contentcenter.entity.Category;
 import com.banmingi.communityplus.contentcenter.entity.RocketMQTransactionLog;
 import com.banmingi.communityplus.contentcenter.enums.ArticleAddBonusValueEnum;
 import com.banmingi.communityplus.contentcenter.enums.ArticleSortEnum;
@@ -52,7 +55,7 @@ public class ArticleService {
     private final Source source;
 
     private static final String ARTICLE_SAVE_KEY = "article:save:";
-
+    private static final String ARTICLE_ID_KEY = "article:id:";
 
 
     /**
@@ -60,6 +63,9 @@ public class ArticleService {
      * @param articlePublishDTO
      */
     public void publishOrUpdate(ArticlePublishDTO articlePublishDTO) {
+        //移除redis中保存的文章
+        this.redisTemplate.delete(ARTICLE_SAVE_KEY + articlePublishDTO.getUserId());
+
         Article article = new Article();
         BeanUtils.copyProperties(articlePublishDTO,article);
         if (article.getId() == null){
@@ -68,11 +74,13 @@ public class ArticleService {
             article.setModifyTime(System.currentTimeMillis());
             this.articleMapper.insert(article);
         } else {
+            //移除redis中保存的文章详情
+            this.redisTemplate.delete(ARTICLE_ID_KEY + article.getId());
+            //更新数据库
             article.setModifyTime(System.currentTimeMillis());
             this.articleMapper.updateById(article);
+
         }
-        //移除redis中保存的文章
-        this.redisTemplate.delete(ARTICLE_SAVE_KEY + articlePublishDTO.getUserId());
     }
 
     /**
@@ -184,6 +192,10 @@ public class ArticleService {
     public PageInfo<ArticleListDTO> q(String search, Integer categoryId, String sort, Integer pageNum, Integer pageSize) {
         //构建查询条件
         QueryWrapper<Article> wrapper = new QueryWrapper<>();
+
+        //文章审核通过且公开
+        wrapper.eq("audit_status",2);
+        wrapper.eq("show_flag",1);
         //搜寻条件不为空
         if (StringUtils.isNotBlank(search)) {
             wrapper.like("title",search);
@@ -218,13 +230,11 @@ public class ArticleService {
                 break;
             }
         }
-
         //分页
         //切入下面不分页的SQL,自动拼接分页的SQL
         PageHelper.startPage(pageNum,pageSize);
         //根据条件查询结果
         List<Article> articleList = this.articleMapper.selectList(wrapper);
-
         /*
           因为PageHelper针对的分页是切入数据库的物理分页,这里只能对Article进行分页,但想要的返回结果是ArticleListDTO，
           所以现在这里获取到PageInfo<Article>的分页属性,然后再在下面从新赋值给PageInfo<ArticleListDTO>
@@ -250,5 +260,45 @@ public class ArticleService {
         articleListDTOPageInfo.setList(articleListDTOList);
 
         return articleListDTOPageInfo;
+    }
+
+
+
+    /**
+     * 文件文章id查找文章
+     * @param id 文章id
+     * @return 文章详情实体
+     */
+    public ArticleDTO findById(Integer id) {
+
+        //先从缓存中查询文字详情
+        ArticleDTO articleDTO = (ArticleDTO) this.redisTemplate.opsForValue().get(ARTICLE_ID_KEY + id);
+        //缓存中没有的话
+        if (articleDTO == null) {
+            //从数据库中查询
+            Article article = this.articleMapper.selectById(id);
+            //构建文章详情实体
+            ArticleDTO articleDTOCache = new ArticleDTO();
+            BeanUtils.copyProperties(article,articleDTOCache);
+            UserDTO userDTO = this.userFeignClient.findById(article.getUserId());
+            Category category = this.categoryMapper.selectById(article.getCategoryId());
+            articleDTOCache.setUserDTO(userDTO);
+            articleDTOCache.setCategory(category);
+
+            //文章详情放入缓存,缓存时间1~2小时,精确到秒即可,设置不同的缓存时间可防止缓存雪崩
+            articleDTO = articleDTOCache;
+            long cacheTime = new Double((Math.random()*3600 + 3600)).longValue();
+            this.redisTemplate.opsForValue().set(ARTICLE_ID_KEY+id,articleDTO,cacheTime,TimeUnit.SECONDS);
+        }
+        return articleDTO;
+    }
+
+    /**
+     * 删除文章
+     * @param id 文章id
+     */
+    public void deleteById(Integer id) {
+        this.redisTemplate.delete(ARTICLE_ID_KEY + id);
+        this.articleMapper.deleteById(id);
     }
 }
