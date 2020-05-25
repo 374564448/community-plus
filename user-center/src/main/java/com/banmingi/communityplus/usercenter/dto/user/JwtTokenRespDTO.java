@@ -1,4 +1,4 @@
-package com.banmingi.communityplus.usercenter.dto;
+package com.banmingi.communityplus.usercenter.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,15 +15,14 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRespDTO implements Serializable {
-
-    private static final long serialVersionUID = -479280076325178110L;
+public class JwtTokenRespDTO implements Serializable {
+    private static final long serialVersionUID = -8019319419919167830L;
     /**
      * token
      */
-    private JwtTokenRespDTO token;
+    private String token;
     /**
-     * 用户信息
+     * 过期时间
      */
-    private UserDTO user;
+    private Long expirationTime;
 }

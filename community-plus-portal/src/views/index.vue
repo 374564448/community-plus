@@ -31,7 +31,7 @@
             </div>
           </div>
           <!-- 没有数据时显示-->
-          <div v-show="articleListPageInfo.total===0" style="text-align: center;padding:40px 0;user-select: none">
+          <div v-show="articleListPageInfo.total===0 || !articleListPageInfo" style="text-align: center;padding:40px 0;user-select: none">
             <i class="iconfont" style="font-size: 120px;color: rgba(0,181,173,0.7);">&#xe612;</i>
           </div>
           <!-- 文章list-->
@@ -56,10 +56,9 @@
               </div>
               <!-- 文章标题 -->
               <div class="article-list-title" @click="articleDetail(i.id)">{{i.title}}
-                <div class="article-list-newFlag" v-if="new Date().getTime()-i.modifyTime<259200000">new</div>
+                <div class="article-list-newFlag" v-if="new Date().getTime()-i.createTime<259200000">new</div>
               </div>
               <!-- 阅览、点赞、评论等-->
-
               <div class="article-list-publishTime">
                 <el-popover
                   placement="top"
@@ -82,7 +81,7 @@
               </span>
                 </el-popover>
                 <el-divider direction="vertical"/>
-                {{getTheDateDiff(i.modifyTime)}}
+                {{getTheDateDiff(i.createTime)}}
               </div>
             </div>
           </div>
@@ -107,12 +106,15 @@
       <!-- 右边信息栏 -->
       <el-col :span="6">
         <div class="info-box">
-          <div class="edit-myInfo">
+          <div class="edit-myInfo" v-if="this.$store.getters.getUser.id">
             <div style="float:left; height: 48px;width: 48px;border:1px solid #C0C4CC;border-radius: 5px;cursor: pointer">
-              <img :src="avatarUrl" style="margin: 2px; height: 42px;width: 42px;border:1px solid #E4E7ED;border-radius: 5px"/>
+              <img :src="this.$store.getters.getUser.avatarUrl"
+                   style="margin: 2px; height: 42px;width: 42px;border:1px solid #E4E7ED;border-radius: 5px"/>
             </div>
-            <div class="myInfo-name">{{name}}</div>
-            <div class="edit-button"><i class="iconfont" style="font-size: 13px;color: rgba(0,181,173,0.7);">&#xe66d;编辑</i></div>
+            <div class="myInfo-name">{{this.$store.getters.getUser.name}}</div>
+            <div class="edit-button">
+              <i class="iconfont" style="font-size: 13px;color: rgba(0,181,173,0.7);">&#xe66d;编辑</i>
+            </div>
           </div>
         </div>
       </el-col>
@@ -121,7 +123,6 @@
 </template>
 
 <script>
-  import "@/assets/css/index.css";
   import request from "@/utils/request";
   import {CATEGORY_API_URL,ARTICLE_LIST_URL} from "@/utils/api";
   import { getDateDiff } from "@/utils/common";
@@ -133,20 +134,6 @@
       this.searchArticleList(this.$route.query.search);
     },
 
-    computed: {
-      /**
-       * 个人信息
-       */
-      userId() {
-        return this.$store.getters.getUser.id;
-      },
-      avatarUrl() {
-        return this.$store.getters.getUser.avatarUrl;
-      },
-      name() {
-        return this.$store.getters.getUser.name;
-      }
-    },
 
     data() {
       return {
@@ -259,7 +246,7 @@
        * 文章详情页
        */
       articleDetail(id) {
-        this.$router.push({ name: 'article', params: {id: id}})
+        this.$router.push({ name: 'articles', params: {id: id}})
       }
 
     }
@@ -268,6 +255,5 @@
 </script>
 
 <style scoped>
-
-
+  @import '../assets/css/index.css';
 </style>

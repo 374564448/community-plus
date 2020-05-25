@@ -15,15 +15,18 @@
     <div  class="editor">
       <mavon-editor ref=md @imgAdd="$imgAdd" placeholder="文章内容..." v-model="articlePublishDTO.content"  style="min-height: 600px;"/>
     </div>
+
     <!-- 发布按钮 -->
-    <div style="user-select:none;margin-left: 1100px">
-      <button class="save-button" @click="saveArticle()">
-        <i class="iconfont" style="font-size: 16px;">&#xe6d0;</i>&nbsp;保存草稿
-      </button>
-      &nbsp;&nbsp;<span >or</span>&nbsp;&nbsp;
-      <button class="publish-button" @click="showPublishDialog()">
-        <i class="iconfont" style="font-size: 16px;">&#xe651;</i>&nbsp;发布文章
-      </button>
+    <div style="position: relative;height: 30px;border-radius: 5px">
+      <div style="user-select:none;position: absolute;right: 20px">
+        <button class="save-button" @click="saveArticle()">
+          <i class="iconfont" style="font-size: 16px;">&#xe6d0;</i>&nbsp;保存草稿
+        </button>
+        &nbsp;&nbsp;<span >or</span>&nbsp;&nbsp;
+        <button class="publish-button" @click="showPublishDialog()">
+          <i class="iconfont" style="font-size: 16px;">&#xe651;</i>&nbsp;发布文章
+        </button>
+      </div>
     </div>
 
 

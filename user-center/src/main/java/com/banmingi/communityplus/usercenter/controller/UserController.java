@@ -1,12 +1,12 @@
 package com.banmingi.communityplus.usercenter.controller;
 
 import com.banmingi.communityplus.commons.utils.JwtOperator;
-import com.banmingi.communityplus.usercenter.dto.GeneralLoginDTO;
-import com.banmingi.communityplus.usercenter.dto.GitHubLoginDTO;
-import com.banmingi.communityplus.usercenter.dto.JwtTokenRespDTO;
-import com.banmingi.communityplus.usercenter.dto.LoginRespDTO;
-import com.banmingi.communityplus.usercenter.dto.RegisterDTO;
-import com.banmingi.communityplus.usercenter.dto.UserDTO;
+import com.banmingi.communityplus.usercenter.dto.user.GeneralLoginDTO;
+import com.banmingi.communityplus.usercenter.dto.user.GitHubLoginDTO;
+import com.banmingi.communityplus.usercenter.dto.user.JwtTokenRespDTO;
+import com.banmingi.communityplus.usercenter.dto.user.LoginRespDTO;
+import com.banmingi.communityplus.usercenter.dto.user.RegisterDTO;
+import com.banmingi.communityplus.usercenter.dto.user.UserDTO;
 import com.banmingi.communityplus.usercenter.entity.User;
 import com.banmingi.communityplus.usercenter.service.UserService;
 import io.jsonwebtoken.Claims;
@@ -35,7 +35,7 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;

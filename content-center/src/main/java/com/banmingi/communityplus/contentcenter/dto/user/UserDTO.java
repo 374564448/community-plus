@@ -1,4 +1,4 @@
-package com.banmingi.communityplus.contentcenter.dto.usercenter;
+package com.banmingi.communityplus.contentcenter.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

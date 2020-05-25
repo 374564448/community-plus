@@ -38,7 +38,6 @@
 </template>
 
 <script>
-  import "@/assets/css/register.css";
   import request from "@/utils/request";
   import {CHECK_CODE_URL,REGISTER_USER_URL} from "@/utils/api";
     export default {
@@ -194,5 +193,5 @@
 </script>
 
 <style scoped>
-
+  @import '../../assets/css/register.css';
 </style>

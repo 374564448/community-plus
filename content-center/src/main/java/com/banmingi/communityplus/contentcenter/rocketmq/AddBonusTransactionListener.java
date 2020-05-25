@@ -1,7 +1,7 @@
 package com.banmingi.communityplus.contentcenter.rocketmq;
 
 import com.alibaba.fastjson.JSON;
-import com.banmingi.communityplus.contentcenter.dto.ArticleAuditDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ArticleAuditDTO;
 import com.banmingi.communityplus.contentcenter.entity.RocketMQTransactionLog;
 import com.banmingi.communityplus.contentcenter.mapper.RocketMQTransactionLogMapper;
 import com.banmingi.communityplus.contentcenter.service.ArticleService;

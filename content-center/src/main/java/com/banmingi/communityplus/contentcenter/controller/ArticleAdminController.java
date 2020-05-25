@@ -1,6 +1,6 @@
 package com.banmingi.communityplus.contentcenter.controller;
 
-import com.banmingi.communityplus.contentcenter.dto.ArticleAuditDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ArticleAuditDTO;
 import com.banmingi.communityplus.contentcenter.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description
  */
 @RestController
-@RequestMapping("admin/article")
+@RequestMapping("admin/articles")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ArticleAdminController {
 

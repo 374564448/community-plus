@@ -4,7 +4,7 @@ export const BASE_API_URL = 'http://localhost:9000';
 
 //用户中心
 //用户API路径
-export const USER_API_URL = BASE_API_URL + '/user';
+export const USER_API_URL = BASE_API_URL + '/users';
 //普通账户登录
 export const GENERAL_LOGIN_URL = USER_API_URL + '/generalLogin';
 //GitHub账户登录
@@ -21,7 +21,7 @@ export const REGISTER_USER_URL = USER_API_URL + '/register';
 //分类API路径
 export const CATEGORY_API_URL = BASE_API_URL + '/category';
 //文章API路径
-export const ARTICLE_API_URL = BASE_API_URL + '/article';
+export const ARTICLE_API_URL = BASE_API_URL + '/articles';
 //文章保存路径
 export const ARTICLE_SAVED_API_URL =  ARTICLE_API_URL+ '/save';
 //获取保存文章路径
@@ -31,7 +31,7 @@ export const ARTICLE_PUBLISH_URL = ARTICLE_API_URL + '/publish';
 //分页 & 条件 获取文章列表路径
 export const ARTICLE_LIST_URL = ARTICLE_API_URL + '/q';
 //文章详情API
-
+export const ARTICLE_DETAIL_URL = ARTICLE_API_URL + '/';
 
 //云中心
 //上传文件API路径

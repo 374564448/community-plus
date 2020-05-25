@@ -1,12 +1,12 @@
 package com.banmingi.communityplus.contentcenter.service;
 
 import com.alibaba.fastjson.JSON;
-import com.banmingi.communityplus.contentcenter.dto.ArticleAuditDTO;
-import com.banmingi.communityplus.contentcenter.dto.ArticleDTO;
-import com.banmingi.communityplus.contentcenter.dto.ArticleListDTO;
-import com.banmingi.communityplus.contentcenter.dto.ArticlePublishDTO;
-import com.banmingi.communityplus.contentcenter.dto.UserAddBonusMsgDTO;
-import com.banmingi.communityplus.contentcenter.dto.usercenter.UserDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ArticleAuditDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ArticleDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ArticleListDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ArticlePublishDTO;
+import com.banmingi.communityplus.contentcenter.dto.user.UserAddBonusMsgDTO;
+import com.banmingi.communityplus.contentcenter.dto.user.UserDTO;
 import com.banmingi.communityplus.contentcenter.entity.Article;
 import com.banmingi.communityplus.contentcenter.entity.Category;
 import com.banmingi.communityplus.contentcenter.entity.RocketMQTransactionLog;
@@ -198,7 +198,7 @@ public class ArticleService {
         wrapper.eq("show_flag",1);
         //搜寻条件不为空
         if (StringUtils.isNotBlank(search)) {
-            wrapper.like("title",search);
+            wrapper.like("title",search).or().like("tag",search);
         }
         //分类查询不为空
         if (categoryId != null) {
@@ -209,23 +209,23 @@ public class ArticleService {
             if (articleSortEnum.name().toLowerCase().equals(sort)) {
                 //最新文章排序
                 if (articleSortEnum == ArticleSortEnum.NEW) {
-                    wrapper.orderByDesc("modify_time");
+                    wrapper.orderByDesc("create_time");
                 }
                 //最热文章排序(根据浏览数)
                 if (articleSortEnum == ArticleSortEnum.HOT) {
-                    wrapper.orderByDesc("view_count","modify_time");
+                    wrapper.orderByDesc("view_count","create_time");
                 }
                 //根据点赞数排序
                 if (articleSortEnum == ArticleSortEnum.LIKE) {
-                    wrapper.orderByDesc("like_count","modify_time");
+                    wrapper.orderByDesc("like_count","create_time");
                 }
                 //根据评论数排序
                 if (articleSortEnum == ArticleSortEnum.COMMENT) {
-                    wrapper.orderByDesc("comment_count","modify_time");
+                    wrapper.orderByDesc("comment_count","create_time");
                 }
                 //根据收藏数排序
                 if (articleSortEnum == ArticleSortEnum.COLLECTION) {
-                    wrapper.orderByDesc("collection_count","modify_time");
+                    wrapper.orderByDesc("collection_count","create_time");
                 }
                 break;
             }
@@ -279,16 +279,20 @@ public class ArticleService {
             Article article = this.articleMapper.selectById(id);
             //构建文章详情实体
             ArticleDTO articleDTOCache = new ArticleDTO();
-            BeanUtils.copyProperties(article,articleDTOCache);
-            UserDTO userDTO = this.userFeignClient.findById(article.getUserId());
-            Category category = this.categoryMapper.selectById(article.getCategoryId());
-            articleDTOCache.setUserDTO(userDTO);
-            articleDTOCache.setCategory(category);
-
-            //文章详情放入缓存,缓存时间1~2小时,精确到秒即可,设置不同的缓存时间可防止缓存雪崩
-            articleDTO = articleDTOCache;
-            long cacheTime = new Double((Math.random()*3600 + 3600)).longValue();
-            this.redisTemplate.opsForValue().set(ARTICLE_ID_KEY+id,articleDTO,cacheTime,TimeUnit.SECONDS);
+            //文章不为null && 文章审核通过 && 文章公开
+            if (article!=null && article.getAuditStatus().equals(2) && article.getShowFlag().equals(1)) {
+                BeanUtils.copyProperties(article,articleDTOCache);
+                //查询作者信息
+                UserDTO userDTO = this.userFeignClient.findById(article.getUserId());
+                //查询分类信息
+                Category category = this.categoryMapper.selectById(article.getCategoryId());
+                articleDTOCache.setUserDTO(userDTO);
+                articleDTOCache.setCategory(category);
+                //文章详情放入缓存,缓存时间1~2小时,精确到秒即可,设置不同的缓存时间可防止缓存雪崩
+                articleDTO = articleDTOCache;
+                long cacheTime = new Double((Math.random()*3600 + 3600)).longValue();
+                this.redisTemplate.opsForValue().set(ARTICLE_ID_KEY+id,articleDTO,cacheTime,TimeUnit.SECONDS);
+            }
         }
         return articleDTO;
     }

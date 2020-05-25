@@ -1,4 +1,4 @@
-package com.banmingi.communityplus.usercenter.dto;
+package com.banmingi.communityplus.usercenter.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,17 +15,12 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO implements Serializable {
-    private static final long serialVersionUID = -8606603115110224525L;
+public class GitHubLoginDTO implements Serializable {
+    private static final long serialVersionUID = 8692678955849930475L;
     /**
-     * id
+     * 账户id
      */
-    private Integer id;
-
-    /**
-     * 账户类型
-     */
-    private Integer accountType;
+    private String accountId;
 
     /**
      * 用户名
@@ -41,10 +36,4 @@ public class UserDTO implements Serializable {
      * 简介
      */
     private String bio;
-
-    /**
-     * 用户积分
-     */
-    private Integer bonus;
-
 }

@@ -1,6 +1,6 @@
 package com.banmingi.communityplus.usercenter.rocketmq;
 
-import com.banmingi.communityplus.usercenter.dto.UserAddBonusMsgDTO;
+import com.banmingi.communityplus.usercenter.dto.user.UserAddBonusMsgDTO;
 import com.banmingi.communityplus.usercenter.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

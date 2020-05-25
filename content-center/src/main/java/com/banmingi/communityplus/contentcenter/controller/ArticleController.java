@@ -1,8 +1,8 @@
 package com.banmingi.communityplus.contentcenter.controller;
 
-import com.banmingi.communityplus.contentcenter.dto.ArticleDTO;
-import com.banmingi.communityplus.contentcenter.dto.ArticleListDTO;
-import com.banmingi.communityplus.contentcenter.dto.ArticlePublishDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ArticleDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ArticleListDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ArticlePublishDTO;
 import com.banmingi.communityplus.contentcenter.service.ArticleService;
 import com.github.pagehelper.PageInfo;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description
  */
 @RestController
-@RequestMapping("article")
+@RequestMapping("articles")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ArticleController {
 
@@ -57,7 +57,7 @@ public class ArticleController {
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false,defaultValue = "new") String sort,
             @RequestParam(required = false,defaultValue = "1") Integer pageNum,
-            @RequestParam(required = false,defaultValue = "3") Integer pageSize) {
+            @RequestParam(required = false,defaultValue = "10") Integer pageSize) {
         PageInfo<ArticleListDTO> articleList = this.articleService.q(search,categoryId,sort,pageNum,pageSize);
 
         return ResponseEntity.ok(articleList);

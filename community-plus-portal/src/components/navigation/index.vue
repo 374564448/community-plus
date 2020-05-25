@@ -25,7 +25,7 @@
       <div class="isLogin" v-if="!this.loginAndRegisterButtonShow">
         <!--写作按钮-->
         <div class="publish">
-          <router-link to="/article/publish"><i class="iconfont" style="font-size: 30px;">&#xe708;</i></router-link>
+          <router-link to="/articles/publish"><i class="iconfont" style="font-size: 30px;">&#xe708;</i></router-link>
         </div>
         <!--通知按钮-->
         <div class="notice">
@@ -128,8 +128,6 @@
 </template>
 
 <script>
-
-  import "@/assets/css/navigation.css";
   import request from "@/utils/request";
   import { GET_USER_INFO_URL,GENERAL_LOGIN_URL } from '@/utils/api';
   import {setToken,getToken, removeToken} from "@/utils/auth";
@@ -306,5 +304,5 @@
 </script>
 
 <style scoped>
-
+  @import '../../assets/css/navigation.css';
 </style>

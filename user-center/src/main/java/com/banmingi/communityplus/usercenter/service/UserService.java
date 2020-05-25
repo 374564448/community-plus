@@ -1,9 +1,9 @@
 package com.banmingi.communityplus.usercenter.service;
 
-import com.banmingi.communityplus.usercenter.dto.GeneralLoginDTO;
-import com.banmingi.communityplus.usercenter.dto.GitHubLoginDTO;
-import com.banmingi.communityplus.usercenter.dto.RegisterDTO;
-import com.banmingi.communityplus.usercenter.dto.UserAddBonusMsgDTO;
+import com.banmingi.communityplus.usercenter.dto.user.GeneralLoginDTO;
+import com.banmingi.communityplus.usercenter.dto.user.GitHubLoginDTO;
+import com.banmingi.communityplus.usercenter.dto.user.RegisterDTO;
+import com.banmingi.communityplus.usercenter.dto.user.UserAddBonusMsgDTO;
 import com.banmingi.communityplus.usercenter.entity.BonusEventLog;
 import com.banmingi.communityplus.usercenter.entity.User;
 import com.banmingi.communityplus.usercenter.enums.AccountTypeEnum;

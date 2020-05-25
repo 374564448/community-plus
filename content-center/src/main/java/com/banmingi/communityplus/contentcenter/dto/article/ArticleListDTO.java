@@ -1,4 +1,4 @@
-package com.banmingi.communityplus.contentcenter.dto;
+package com.banmingi.communityplus.contentcenter.dto.article;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -75,8 +75,8 @@ public class ArticleListDTO implements Serializable {
 
 
     /**
-     * 修改时间
+     * 发布时间
      */
-    private Long modifyTime;
+    private Long createTime;
 
 }

@@ -1,6 +1,6 @@
-package com.banmingi.communityplus.contentcenter.dto;
+package com.banmingi.communityplus.contentcenter.dto.article;
 
-import com.banmingi.communityplus.contentcenter.dto.usercenter.UserDTO;
+import com.banmingi.communityplus.contentcenter.dto.user.UserDTO;
 import com.banmingi.communityplus.contentcenter.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,6 +64,12 @@ public class ArticleDTO implements Serializable {
      * 是否原创: 1:原创，2: 转载
      */
     private Integer isOriginal;
+
+
+    /**
+     * 发布时间
+     */
+    private Long createTime;
 
     /**
      * 修改时间

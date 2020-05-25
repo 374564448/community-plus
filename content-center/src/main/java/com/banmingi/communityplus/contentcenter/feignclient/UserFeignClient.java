@@ -1,6 +1,6 @@
 package com.banmingi.communityplus.contentcenter.feignclient;
 
-import com.banmingi.communityplus.contentcenter.dto.usercenter.UserDTO;
+import com.banmingi.communityplus.contentcenter.dto.user.UserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @description
  */
 
-@FeignClient(name = "user-center",path = "user")
+@FeignClient(name = "user-center",path = "users")
 public interface UserFeignClient {
     @GetMapping("/{id}")
     UserDTO findById(@PathVariable Integer id);

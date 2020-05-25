@@ -6,7 +6,7 @@ import index from '@/views/index'
 import login_github from "@/views/user/login_github";
 import register from "@/views/user/register";
 import publish from "@/views/article/publish";
-import article from "@/views/article/article";
+import articles from "@/views/article/articles";
 import error from "@/views/error";
 
 
@@ -33,15 +33,16 @@ export default new Router({
       component: login_github
     },
     {
-      path: '/article/publish',
+      path: '/articles/publish',
       name: 'publish',
       component: publish
     },
     {
-      path: '/article/:id',
-      name: 'article',
-      component: article
+      path: '/articles/:id(\\d+)',
+      name: 'articles',
+      component: articles
     },
+
     {
       path: '*',
       name: 'error',
