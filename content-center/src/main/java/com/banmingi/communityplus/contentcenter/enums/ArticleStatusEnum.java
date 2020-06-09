@@ -14,6 +14,6 @@ public enum ArticleStatusEnum {
     PASS(2),
     REJECT(3);
 
-    private Integer status;
+    private final Integer status;
 
 }

@@ -150,8 +150,8 @@ public class ArticleService {
 
     /**
      *审核文章,将状态设置为 PASS/REJECT
-     * @param id
-     * @param articleAuditDTO
+     * @param id 文章id
+     * @param articleAuditDTO 审核状态dto
      */
     public void auditInDB(Integer id,ArticleAuditDTO articleAuditDTO) {
         Article article = Article.builder()
@@ -164,9 +164,9 @@ public class ArticleService {
 
     /**
      * 审核资源,将状态设为PASS/REJECT,并记录事务日志
-     * @param id
-     * @param articleAuditDTO
-     * @param transactionId
+     * @param id 文章id
+     * @param articleAuditDTO 审核状态dto
+     * @param transactionId 本地事务id
      */
     @Transactional(rollbackFor = Exception.class)
     public void auditInDBWithRocketMQLog(Integer id,
@@ -273,28 +273,39 @@ public class ArticleService {
 
         //先从缓存中查询文字详情
         ArticleDTO articleDTO = (ArticleDTO) this.redisTemplate.opsForValue().get(ARTICLE_ID_KEY + id);
-        //缓存中没有的话
-        if (articleDTO == null) {
-            //从数据库中查询
-            Article article = this.articleMapper.selectById(id);
-            //构建文章详情实体
-            ArticleDTO articleDTOCache = new ArticleDTO();
-            //文章不为null && 文章审核通过 && 文章公开
-            if (article!=null && article.getAuditStatus().equals(2) && article.getShowFlag().equals(1)) {
-                BeanUtils.copyProperties(article,articleDTOCache);
-                //查询作者信息
-                UserDTO userDTO = this.userFeignClient.findById(article.getUserId());
-                //查询分类信息
-                Category category = this.categoryMapper.selectById(article.getCategoryId());
-                articleDTOCache.setUserDTO(userDTO);
-                articleDTOCache.setCategory(category);
-                //文章详情放入缓存,缓存时间1~2小时,精确到秒即可,设置不同的缓存时间可防止缓存雪崩
-                articleDTO = articleDTOCache;
-                long cacheTime = new Double((Math.random()*3600 + 3600)).longValue();
-                this.redisTemplate.opsForValue().set(ARTICLE_ID_KEY+id,articleDTO,cacheTime,TimeUnit.SECONDS);
+        //缓存中有的话
+        if (articleDTO != null) {
+            //更新缓存文章阅读数 +1
+            articleDTO.setViewCount(articleDTO.getViewCount() + 1);
+            this.redisTemplate.opsForValue().set(ARTICLE_ID_KEY+id,articleDTO,7L,TimeUnit.DAYS);
+            return articleDTO;
+        }
+
+        //从数据库中查询
+        Article article = this.articleMapper.selectById(id);
+        //构建文章详情实体
+        ArticleDTO articleDTOCache = new ArticleDTO();
+        //文章不为null && 文章审核通过 && 文章公开
+        if (article!=null && article.getAuditStatus().equals(2) && article.getShowFlag().equals(1)) {
+
+            //更新数据库阅读数 +1
+            article.setViewCount(article.getViewCount() + 1);
+            this.articleMapper.updateById(article);
+
+            //构建响应
+            BeanUtils.copyProperties(article,articleDTOCache);
+            //查询作者信息
+            UserDTO userDTO = this.userFeignClient.findById(article.getUserId());
+            //查询分类信息
+            Category category = this.categoryMapper.selectById(article.getCategoryId());
+            articleDTOCache.setUserDTO(userDTO);
+            articleDTOCache.setCategory(category);
+            //如果文章浏览数超过10000的话,就将文章详情放入缓存
+            if (articleDTOCache.getViewCount()>=10000) {
+                this.redisTemplate.opsForValue().set(ARTICLE_ID_KEY+id,articleDTOCache,7L,TimeUnit.DAYS);
             }
         }
-        return articleDTO;
+        return articleDTOCache;
     }
 
     /**

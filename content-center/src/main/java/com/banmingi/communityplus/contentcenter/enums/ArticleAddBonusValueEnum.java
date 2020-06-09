@@ -13,7 +13,7 @@ public enum ArticleAddBonusValueEnum {
     CREATED(50,"CREATED","文章发布加积分"),
     LIKED(10,"LIKED","文章被点赞加积分"),
     COLLECTED(20,"COLLECTED","文章被收藏加积分");
-    private Integer value;
-    private String event;
-    private String description;
+    private final Integer value;
+    private final String event;
+    private final String description;
 }
