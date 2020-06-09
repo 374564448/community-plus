@@ -1,5 +1,6 @@
 package com.banmingi.communityplus.contentcenter.controller;
 
+import com.banmingi.communityplus.commons.enums.CheckAuthorization;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleAuditDTO;
 import com.banmingi.communityplus.contentcenter.service.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class ArticleAdminController {
      * @return
      */
     @PutMapping("/audit/{id}")
+    @CheckAuthorization("admin")
     public ResponseEntity<Void> audit(@PathVariable Integer id,
                                       @RequestBody ArticleAuditDTO articleAuditDTO) {
         this.articleService.audit(id,articleAuditDTO);

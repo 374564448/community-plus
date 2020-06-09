@@ -9,7 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="gateway" />
         <module name="content-center" />
-        <module name="common-dto" />
+        <module name="common" />
         <module name="cloud-center" />
         <module name="user-center" />
         <module name="sms-center" />
@@ -33,6 +33,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cloud-center" options="-parameters" />
+      <module name="common" options="-parameters" />
       <module name="common-dto" options="-parameters" />
       <module name="content-center" options="-parameters" />
       <module name="gateway" options="-parameters" />

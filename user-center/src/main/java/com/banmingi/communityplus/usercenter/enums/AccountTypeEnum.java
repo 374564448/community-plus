@@ -12,5 +12,5 @@ import lombok.Getter;
 public enum AccountTypeEnum {
     General(1),
     GitHub(2);
-    private Integer accountType;
+    private final Integer accountType;
 }

@@ -4,8 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/cloud-center/cloud-center.iml" filepath="$PROJECT_DIR$/cloud-center/cloud-center.iml" />
       <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
-      <module fileurl="file://$PROJECT_DIR$/common/common-dto/common-dto.iml" filepath="$PROJECT_DIR$/common/common-dto/common-dto.iml" />
-      <module fileurl="file://$PROJECT_DIR$/common/common-utils/common-utils.iml" filepath="$PROJECT_DIR$/common/common-utils/common-utils.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/community-plus.iml" filepath="$PROJECT_DIR$/.idea/community-plus.iml" />
       <module fileurl="file://$PROJECT_DIR$/content-center/content-center.iml" filepath="$PROJECT_DIR$/content-center/content-center.iml" />
       <module fileurl="file://$PROJECT_DIR$/dependencies/dependencies.iml" filepath="$PROJECT_DIR$/dependencies/dependencies.iml" />

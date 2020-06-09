@@ -1,5 +1,6 @@
 package com.banmingi.communityplus.contentcenter.controller;
 
+import com.banmingi.communityplus.commons.enums.CheckLogin;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleDTO;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleListDTO;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticlePublishDTO;
@@ -68,6 +69,7 @@ public class ArticleController {
      * @return 成功
      */
     @PostMapping("/publish")
+    @CheckLogin
     public ResponseEntity<Void> publish(@RequestBody ArticlePublishDTO articlePublishDTO) {
         this.articleService.publishOrUpdate(articlePublishDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -79,6 +81,7 @@ public class ArticleController {
      * @return 成功
      */
     @PostMapping("/save")
+    @CheckLogin
     public ResponseEntity<Void> save(@RequestBody ArticlePublishDTO articlePublishDTO) {
         this.articleService.save(articlePublishDTO);
         return ResponseEntity.ok().build();
@@ -90,6 +93,7 @@ public class ArticleController {
      * @return 返回保存的文章
      */
     @GetMapping("/getTheSavedArticle")
+    @CheckLogin
     public ResponseEntity<ArticlePublishDTO> getTheSavedArticle(@RequestParam("userId") Integer userId) {
         ArticlePublishDTO theSavedArticle = this.articleService.getTheSavedArticle(userId);
         return ResponseEntity.ok(theSavedArticle);

@@ -309,6 +309,12 @@
 .comment-second-show-button-show {
   color: #2095f1;
 }
+.comment-delete-button {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
 .comment-second-box {
   margin-bottom: 10px;
 }
@@ -338,7 +344,7 @@
 .commentator-second-content-box {
   margin: 5px 34px;
   color: #403f3f;
-  font-size: 15px;
+  font-size: 14px;
 }
 .comment-second-action {
   user-select: none;
@@ -354,6 +360,12 @@
   color: #2095f1;
 }
 .comment-second-button {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.comment-second-delete-button {
   display: inline-block;
   margin-left: 10px;
   font-size: 13px;

@@ -203,6 +203,8 @@
             </el-tag>
           </div>
 
+
+
           <!-- 评论 -->
           <div class="comment-box">
             <!-- 评论列表-->
@@ -246,6 +248,10 @@
                                @click="commentSecondShow=!commentSecondShow">
                             <i class="iconfont" style="font-size: 15px;">&#xe604;</i>&nbsp;7
                           </div>
+                          <!--删除评论按钮-->
+                          <div class="comment-delete-button">
+                            <i class="iconfont" style="font-size: 15px;">&#xe63d;</i>
+                          </div>
                         </div>
                         <!-- 二级评论框-->
                         <div>
@@ -288,6 +294,10 @@
                                   <!-- 评论此条评论 -->
                                   <div class="comment-second-button">
                                     <i class="iconfont" style="font-size: 15px;">&#xe604;</i>
+                                  </div>
+                                  <!--删除此条评论-->
+                                  <div class="comment-second-delete-button">
+                                    <i class="iconfont" style="font-size: 15px;">&#xe63d;</i>
                                   </div>
                                 </div>
                               </div>
@@ -337,7 +347,7 @@
             </div>
 
             <!--评论文本输入框-->
-            <div class="comment-area">
+            <div class="comment-area" ref="comment">
               <!-- 警告 -->
               <div class="comment-warning">
                 <i class="iconfont" style="font-size: 16px;">&#xe62f;</i>
@@ -348,7 +358,7 @@
                 type="textarea"
                 placeholder="评论..."
                 :autosize="{ minRows: 4}"
-                v-model="comment"
+                v-model="commentCreateDTO.content"
                 maxlength="300"
                 show-word-limit
               >
@@ -358,6 +368,7 @@
                 <button class="comment-button"><i class="el-icon-chat-dot-round">&nbsp;</i>评论</button>
               </div>
             </div>
+
           </div>
         </el-col>
       </el-row>
@@ -378,7 +389,7 @@
       <!-- 评论 -->
       <div class="action">
         <el-tooltip content="评论" placement="left" effect="light">
-          <div>
+          <div @click="turnComment()">
             <i class="iconfont" style="font-size: 16px;">&#xe604;</i>
             <div>{{articleDTO.commentCount}}</div>
           </div>
@@ -443,12 +454,24 @@
           category: {id: '', image: '', name: ''},
           userDTO: {id: '', accountType: '', name: '', avatarUrl: '', bio: '', bonus: ''}
         },
-        comment: '',
+        //评论
+        commentCreateDTO: {
+          parentId: '',
+          commentatorId: '',
+          type: '',
+          content: ''
+        },
         commentSecond: '',
       }
     },
 
     methods: {
+      /**
+       * 定位到评论框
+       */
+      turnComment(){
+          this.$refs.comment.scrollIntoView();
+      },
 
       /**
        * 把时间戳转换成 *小时前  *天前....
@@ -456,6 +479,7 @@
       getTheDateDiff(time) {
         return getDateDiff(time);
       },
+
 
       /**
        * 获取文章详情
