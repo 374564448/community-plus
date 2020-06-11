@@ -260,7 +260,8 @@
                               <!--二级评论输入框-->
                               <div>
                                 <el-input placeholder="回复..."
-                                          v-model="commentSecond"
+                                          ref="commentSecondInput"
+                                          v-model="commentSecondContent"
                                           class="input-with-select">
                                   <el-button slot="append">评论</el-button>
                                 </el-input>
@@ -347,7 +348,7 @@
             </div>
 
             <!--评论文本输入框-->
-            <div class="comment-area" ref="comment">
+            <div class="comment-area" ref="commentBox">
               <!-- 警告 -->
               <div class="comment-warning">
                 <i class="iconfont" style="font-size: 16px;">&#xe62f;</i>
@@ -355,16 +356,18 @@
               </div>
               <!-- 文本框-->
               <el-input
+                ref="commentInput"
                 type="textarea"
                 placeholder="评论..."
                 :autosize="{ minRows: 4}"
-                v-model="commentCreateDTO.content"
+                v-model="commentContent"
                 maxlength="300"
                 show-word-limit
               >
               </el-input>
               <!--评论按钮-->
-              <div style="margin-top: 15px;padding-bottom:25px;position: relative">
+              <div style="margin-top: 15px;padding-bottom:25px;position: relative"
+                   @click="commentCreate(articleDTO.id,1)">
                 <button class="comment-button"><i class="el-icon-chat-dot-round">&nbsp;</i>评论</button>
               </div>
             </div>
@@ -389,7 +392,7 @@
       <!-- 评论 -->
       <div class="action">
         <el-tooltip content="评论" placement="left" effect="light">
-          <div @click="turnComment()">
+          <div @click="turnCommentInput()">
             <i class="iconfont" style="font-size: 16px;">&#xe604;</i>
             <div>{{articleDTO.commentCount}}</div>
           </div>
@@ -421,7 +424,7 @@
 <script>
   import request from "@/utils/request";
   import {getDateDiff} from "@/utils/common";
-  import {ARTICLE_DETAIL_URL} from "@/utils/api";
+  import {ARTICLE_DETAIL_URL, COMMENT_CREATE_URL} from "@/utils/api";
 
   export default {
     name: "articles",
@@ -461,18 +464,14 @@
           type: '',
           content: ''
         },
-        commentSecond: '',
+        //一级评论的内容
+        commentContent: '',
+        //二级评论的内容
+        commentSecondContent: '',
       }
     },
 
     methods: {
-      /**
-       * 定位到评论框
-       */
-      turnComment(){
-          this.$refs.comment.scrollIntoView();
-      },
-
       /**
        * 把时间戳转换成 *小时前  *天前....
        */
@@ -493,7 +492,86 @@
           window.location.href = "/error";
           console.log(err);
         })
+      },
+
+
+      /**
+       * 定位到评论框
+       */
+      turnCommentInput(){
+        //定位
+        this.$refs.commentBox.scrollIntoView();
+        //input获取焦点
+        this.$refs.commentInput.focus()
+      },
+      /**
+       *定位到二级评论框
+       */
+      turnCommentSecondInput() {
+        this.$refs.commentSecondInput.focus()
+      },
+
+      /**
+       * 评论
+       */
+      commentCreate(parentId,type) {
+        //评论前先校验
+        //判断是否已登录
+        const isLogin = this.$store.getters.getUser.id;
+        if (!isLogin) {
+          this.$message({
+            message: '你必须登录之后才能评论！',
+            type: 'warning'
+          });
+          return;
+        }
+        this.commentCreateDTO.parentId = parentId;
+        this.commentCreateDTO.commentatorId = this.$store.getters.getUser.id;
+        this.commentCreateDTO.type = type;
+        //一级评论
+        if (type === 1) {
+          //一级评论内容不能为空
+          if (!this.commentContent) {
+            this.$message({
+              message: '评论内容不能为空！',
+              type: 'warning'
+            });
+            return;
+          }
+          this.commentCreateDTO.content = this.commentContent;
+        }
+        //二级评论
+        else if (type === 2) {
+          //一级评论内容不能为空
+          if (!this.commentSecondContent) {
+            this.$message({
+              message: '评论内容不能为空！',
+              type: 'warning'
+            });
+            return;
+          }
+          this.commentCreateDTO.content = this.commentSecondContent;
+        }
+
+        //请求后端api发布评论
+        request({
+          url: COMMENT_CREATE_URL,
+          method: 'post',
+          data: this.commentCreateDTO
+        }).then(() => {
+          this.$message({
+            message: '评论成功！',
+            type: 'success'
+          });
+          location.reload();
+        }).catch(err => {
+          console.log(err);
+          this.$message.error('服务器异常，请稍后再试！');
+        })
+
       }
+
+
     }
   }
 </script>

@@ -33,6 +33,12 @@ export const ARTICLE_LIST_URL = ARTICLE_API_URL + '/q';
 //文章详情API
 export const ARTICLE_DETAIL_URL = ARTICLE_API_URL + '/';
 
+//评论
+export const COMMENT_API_URL = BASE_API_URL + "/comment"
+export const COMMENT_CREATE_URL = COMMENT_API_URL + "/"
+
+
+
 //云中心
 //上传文件API路径
 export const UPLOAD_API_URL = BASE_API_URL + '/upload';
