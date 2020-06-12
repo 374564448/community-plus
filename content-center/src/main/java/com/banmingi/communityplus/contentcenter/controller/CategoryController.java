@@ -24,7 +24,7 @@ public class CategoryController {
 
     /**
      * 获取所有分类集合
-     * @return
+     * @return 返回分类集合
      */
     @GetMapping
     public ResponseEntity<List<Category>> queryAllCategory() {

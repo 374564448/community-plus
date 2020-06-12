@@ -4,6 +4,7 @@ import com.banmingi.communityplus.usercenter.dto.user.GeneralLoginDTO;
 import com.banmingi.communityplus.usercenter.dto.user.GitHubLoginDTO;
 import com.banmingi.communityplus.usercenter.dto.user.RegisterDTO;
 import com.banmingi.communityplus.usercenter.dto.user.UserAddBonusMsgDTO;
+import com.banmingi.communityplus.usercenter.dto.user.UserDTO;
 import com.banmingi.communityplus.usercenter.entity.BonusEventLog;
 import com.banmingi.communityplus.usercenter.entity.User;
 import com.banmingi.communityplus.usercenter.enums.AccountTypeEnum;
@@ -24,9 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @auther 半命i 2020/5/1
@@ -66,7 +69,7 @@ public class UserService {
 
     /**
      * 账号密码登录
-     * @param generalLoginDTO
+     * @param generalLoginDTO 账号密码登录DTO
      * @return
      */
     public User generalLogin(GeneralLoginDTO generalLoginDTO) {
@@ -83,7 +86,7 @@ public class UserService {
     /**
      * GitHub账户登录
      *
-     * @param gitHubLoginDTO
+     * @param gitHubLoginDTO gitHub登录DTO
      * @return
      */
     public User gitHubLogin(GitHubLoginDTO gitHubLoginDTO) {
@@ -126,8 +129,14 @@ public class UserService {
      * @param id
      * @return
      */
-    public User findById(Integer id) {
-        return this.userMapper.selectById(id);
+    public UserDTO findById(Integer id) {
+        User user = this.userMapper.selectById(id);
+        if (user == null) {
+            return null;
+        }
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user,userDTO);
+        return userDTO;
     }
 
     /**
@@ -191,5 +200,21 @@ public class UserService {
         bonusEventLog.setCreateTime(System.currentTimeMillis());
         this.bonusEventLogMapper.insert(bonusEventLog);
         log.info("积分添加完毕");
+    }
+
+    /**
+     * 根据用户id集合查询用户信息集合
+     * @param ids 用户id集合
+     * @return 用户信息集合
+     */
+    public List<UserDTO> findListByIds(List<Integer> ids) {
+        return ids.stream().map(id -> {
+            UserDTO userDTO = new UserDTO();
+            User user = this.userMapper.selectById(id);
+            if (user != null) {
+                BeanUtils.copyProperties(user,userDTO);
+            }
+            return userDTO;
+        }).collect(Collectors.toList());
     }
 }

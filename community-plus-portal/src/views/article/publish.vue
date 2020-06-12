@@ -292,11 +292,8 @@
          * 获取保存的文章
          */
         getTheSavedArticle() {
-          request.get(GET_SAVED_ARTICLE_URL,{
-            params: {
-              userId: this.$store.getters.getUser.id, //作者id
-            }
-          }).then(({data}) => {
+          request.get(GET_SAVED_ARTICLE_URL + this.$store.getters.getUser.id)
+            .then(({data}) => {
             if (data) {
               this.articlePublishDTO = data;
               if (data.tag) {

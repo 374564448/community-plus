@@ -16,6 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -128,8 +130,8 @@ public class UserController {
 
     /**
      * 颁发token
-     * @param user
-     * @return
+     * @param user user
+     * @return token
      */
     private String getToken(User user) {
         //2. 颁发token
@@ -142,24 +144,37 @@ public class UserController {
 
     /**
      * 根据id查询用户信息
-     * @param id
-     * @return
+     * @param id 用户id
+     * @return 用户信息
      */
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable Integer id) {
-        User user = this.userService.findById(id);
-        if (user == null) {
+        UserDTO userDTO = this.userService.findById(id);
+        if (userDTO == null) {
             return ResponseEntity.notFound().build();
         }
-        UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(user,userDTO);
         return ResponseEntity.ok(userDTO);
+    }
+
+    /**
+     * 根据用户id集合查询用户信息集合
+     * @param ids 用户id集合
+     * @return 用户信息集合
+     */
+    @GetMapping
+    private ResponseEntity<List<UserDTO>> findListByIds(@RequestParam("ids") List<Integer> ids) {
+        List<UserDTO> userDTOList = this.userService.findListByIds(ids);
+        if (CollectionUtils.isEmpty(userDTOList)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(userDTOList);
     }
 
 
     /**
      * 根据token获取用户信息
-     * @return
+     * @return 用户信息
      */
     @GetMapping("/userInfo")
     public ResponseEntity<UserDTO> getUserInfo(HttpServletRequest request) {
@@ -177,12 +192,10 @@ public class UserController {
         Claims claims = jwtOperator.getClaimsFromToken(token);
         Integer id = claims.get("id", Integer.class);
 
-        User user = this.userService.findById(id);
-        if (user == null) {
+        UserDTO userDTO = this.userService.findById(id);
+        if (userDTO == null) {
             return ResponseEntity.notFound().build();
         }
-        UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(user,userDTO);
         return ResponseEntity.ok(userDTO);
     }
 

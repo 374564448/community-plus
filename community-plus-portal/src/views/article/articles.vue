@@ -208,45 +208,46 @@
           <!-- 评论 -->
           <div class="comment-box">
             <!-- 评论列表-->
-            <div class="comment-list">
+            <div class="comment-list" v-for="(commentDTO,index) in commentDTOList" :key="index">
               <div>
                 <el-row>
                   <el-col :span="2">
                     <!-- 一级评论头像-->
                     <div class="commentator-avatar">
                       <img style="height: 50px;width: 50px;border-radius: 5px;box-shadow: 1px 1px 2px #888888;"
-                           :src="articleDTO.userDTO.avatarUrl"/>
+                           :src="commentDTO.userDTO.avatarUrl"/>
                     </div>
                   </el-col>
                   <el-col :span="22">
                     <div class="comment-info-box">
                       <div class="commentator-name-box">
                         <!--一级评论者name-->
-                        <div class="commentator-name">banmingi</div>
+                        <span v-show="commentDTO.commentatorId === articleDTO.userDTO.id" class="commentatorIsAuthor">作者</span>
+                        <div class="commentator-name">{{commentDTO.userDTO.name}}</div>
                         <!--一级评论者积分-->
                         <div class="commentator-bonus">
                           <i class="iconfont" style="font-size: 11px;">&#xe6c9;</i>
-                          <span>&nbsp;232&nbsp;积分</span>
+                          <span>&nbsp;{{commentDTO.userDTO.bonus}}&nbsp;积分</span>
                         </div>
                       </div>
                       <!--评论内容框-->
                       <!--一级评论内容-->
-                      <div class="comment-content-box">
+                      <div class="comment-content-box" :span="3">
                         <div class="comment-content">
-                          明显第一个面试官更好，起码会点出你的错误，然后引导你一下，我面试的都是嗯嗯嗯嗯...
+                          {{commentDTO.content}}
                         </div>
                         <div class="comment-count-and-action">
                           <!-- 评论时间 -->
-                          <span><i class="iconfont" style="font-size: 11px;">&#xe619;</i>&nbsp;一周前</span>
+                          <span><i class="iconfont" style="font-size: 11px;">&#xe619;</i>&nbsp;{{getTheDateDiff(commentDTO.createTime)}}</span>
                           <!-- 点赞按钮和点赞数 -->
                           <div :class="['comment-like-button',{'comment-like-button-clicked':commentLikeFlag}]"
                                @click="commentLikeFlag=!commentLikeFlag">
-                            <i class="iconfont" style="font-size: 15px;">&#xe60a;</i>&nbsp;0
+                            <i class="iconfont" style="font-size: 15px;">&#xe60a;</i>&nbsp;{{commentDTO.likeCount}}
                           </div>
                           <!-- 展开二级评论按钮 -->
                           <div :class="['comment-second-show-button',{'comment-second-show-button-show':commentSecondShow}]"
-                               @click="commentSecondShow=!commentSecondShow">
-                            <i class="iconfont" style="font-size: 15px;">&#xe604;</i>&nbsp;7
+                               @click="showCommentSecondList(commentDTO.id,2)">
+                            <i class="iconfont" style="font-size: 15px;">&#xe604;</i>&nbsp;{{commentDTO.commentCount}}
                           </div>
                           <!--删除评论按钮-->
                           <div class="comment-delete-button">
@@ -302,40 +303,6 @@
                                   </div>
                                 </div>
                               </div>
-
-
-                              <div class="comment-second-list-box">
-                                <div class="commentator-second-name-box">
-                                  <!--头像-->
-                                  <div style="float: left">
-                                    <img :src="articleDTO.userDTO.avatarUrl"
-                                         style="height: 26px;width: 26px;margin: 2px"/>
-                                  </div>
-                                  <!--名字-->
-                                  <div class="commentator-second-name">
-                                    飞龙在天
-                                  </div>
-                                  <!--评论时间-->
-                                  <div class="commentator-second-comment-time">一周前</div>
-                                </div>
-                                <!--评论内容-->
-                                <div class="commentator-second-content-box">
-                                  贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老
-                                </div>
-                                <!--操作此评论：点赞、评论-->
-                                <div class="comment-second-action">
-                                  <!-- 点赞按钮和点赞数 -->
-                                  <div :class="['comment-second-like-button',{'comment-like-second-button-clicked':commentSecondLikeFlag}]"
-                                       @click="commentSecondLikeFlag=!commentSecondLikeFlag">
-                                    <i class="iconfont" style="font-size: 15px;">&#xe60a;</i>&nbsp;0
-                                  </div>
-                                  <!-- 评论此条评论 -->
-                                  <div class="comment-second-button">
-                                    <i class="iconfont" style="font-size: 15px;">&#xe604;</i>
-                                  </div>
-                                </div>
-                              </div>
-
 
                             </div>
                           </el-collapse-transition>
@@ -424,12 +391,15 @@
 <script>
   import request from "@/utils/request";
   import {getDateDiff} from "@/utils/common";
-  import {ARTICLE_DETAIL_URL, COMMENT_CREATE_URL} from "@/utils/api";
+  import {ARTICLE_DETAIL_URL, COMMENT_CREATE_URL, GET_COMMENT_LIST_URL} from "@/utils/api";
 
   export default {
     name: "articles",
     mounted() {
+      //文章详情
       this.getArticleDTOById(this.$route.params.id);
+      //一级评论列表
+      this.commentList(this.$route.params.id,1)
     },
     data() {
       return {
@@ -457,6 +427,7 @@
           category: {id: '', image: '', name: ''},
           userDTO: {id: '', accountType: '', name: '', avatarUrl: '', bio: '', bonus: ''}
         },
+
         //评论
         commentCreateDTO: {
           parentId: '',
@@ -468,6 +439,10 @@
         commentContent: '',
         //二级评论的内容
         commentSecondContent: '',
+        //一级评论列表
+        commentDTOList: [],
+        //二级评论列表
+        commentSecondDTOList: []
       }
     },
 
@@ -512,6 +487,16 @@
       },
 
       /**
+       *展开二级评论列表
+       */
+      showCommentSecondList(parentId,type) {
+        if (!this.commentSecondShow) {
+          this.commentList(parentId,type);
+        }
+        this.commentSecondShow=!this.commentSecondShow;
+      },
+
+      /**
        * 评论
        */
       commentCreate(parentId,type) {
@@ -552,7 +537,6 @@
           }
           this.commentCreateDTO.content = this.commentSecondContent;
         }
-
         //请求后端api发布评论
         request({
           url: COMMENT_CREATE_URL,
@@ -568,9 +552,30 @@
           console.log(err);
           this.$message.error('服务器异常，请稍后再试！');
         })
+      },
 
+      /**
+       * 获取评论列表
+       * @param parentId
+       * @param type
+       */
+      commentList(parentId,type) {
+        request.get(GET_COMMENT_LIST_URL, {
+          params: {
+            parentId: parentId,
+            type: type
+          }
+        }).then(({data}) => {
+          if (type === 1) {
+            this.commentDTOList = data
+          }
+          if (type === 2) {
+            this.commentSecondDTOList = data
+          }
+        }).catch( err => {
+          console.log(err)
+        })
       }
-
 
     }
   }

@@ -92,9 +92,9 @@ public class ArticleController {
      * @param userId 用户id
      * @return 返回保存的文章
      */
-    @GetMapping("/getTheSavedArticle")
+    @GetMapping("/save/{userId}")
     @CheckLogin
-    public ResponseEntity<ArticlePublishDTO> getTheSavedArticle(@RequestParam("userId") Integer userId) {
+    public ResponseEntity<ArticlePublishDTO> getTheSavedArticle(@PathVariable("userId") Integer userId) {
         ArticlePublishDTO theSavedArticle = this.articleService.getTheSavedArticle(userId);
         return ResponseEntity.ok(theSavedArticle);
     }

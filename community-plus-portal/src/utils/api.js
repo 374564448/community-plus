@@ -25,7 +25,7 @@ export const ARTICLE_API_URL = BASE_API_URL + '/articles';
 //文章保存路径
 export const ARTICLE_SAVED_API_URL =  ARTICLE_API_URL+ '/save';
 //获取保存文章路径
-export const GET_SAVED_ARTICLE_URL = ARTICLE_API_URL + '/getTheSavedArticle';
+export const GET_SAVED_ARTICLE_URL = ARTICLE_API_URL + '/save/';
 //文章发布路径
 export const ARTICLE_PUBLISH_URL = ARTICLE_API_URL + '/publish';
 //分页 & 条件 获取文章列表路径
@@ -36,6 +36,7 @@ export const ARTICLE_DETAIL_URL = ARTICLE_API_URL + '/';
 //评论
 export const COMMENT_API_URL = BASE_API_URL + "/comment"
 export const COMMENT_CREATE_URL = COMMENT_API_URL + "/"
+export const GET_COMMENT_LIST_URL = COMMENT_API_URL + "/list"
 
 
 

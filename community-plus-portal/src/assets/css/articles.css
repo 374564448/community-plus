@@ -261,8 +261,17 @@
   cursor: pointer;
   display: inline-block;
   margin-right: 15px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
+}
+.commentatorIsAuthor {
+  padding: 0 3px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #ffffff;
+  background-color: rgba(245, 108, 108, 0.8);
+  font-weight: 500;
+
 }
 .commentator-name:hover {
   color: rgba(64, 158, 255, 0.7);
