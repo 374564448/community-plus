@@ -42,14 +42,14 @@ public class CommentController {
 
     /**
      * 获取评论列表.
-     * @param parentId 列表parentId
+     * @param commentListId 响应评论列表集合的id：
      * @param type 类型
      * @return 评论列表
      */
     @GetMapping("/list")
-    public ResponseEntity<List<CommentDTO>> getCommentList(@RequestParam("parentId") Integer parentId,
+    public ResponseEntity<List<CommentDTO>> getCommentList(@RequestParam("commentListId") Integer commentListId,
                                                            @RequestParam("type") Integer type) {
-        List<CommentDTO> commentDTOList = this.commentService.getCommentList(parentId,type);
+        List<CommentDTO> commentDTOList = this.commentService.getCommentList(commentListId,type);
         return ResponseEntity.ok(commentDTOList);
     }
 

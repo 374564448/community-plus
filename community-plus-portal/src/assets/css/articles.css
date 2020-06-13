@@ -355,6 +355,11 @@
   color: #403f3f;
   font-size: 14px;
 }
+.commentator-second-content-box .commentedName {
+  color: #446dc4;
+  font-weight: 700;
+  font-size: 12px;
+}
 .comment-second-action {
   user-select: none;
   margin: 5px 34px;

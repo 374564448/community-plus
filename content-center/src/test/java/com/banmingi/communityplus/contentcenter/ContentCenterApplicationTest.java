@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Set;
+
 /**
  * @auther 半命i 2020/5/15
  * @description
@@ -23,7 +25,13 @@ public class ContentCenterApplicationTest {
 
     @Test
     public void test() {
-        this.redisTemplate.delete("article:category");
+        //查询缓存中以article:id:开头的key
+        Set<String> keys = this.redisTemplate.keys("article:id:*");
+        keys.forEach( key -> {
+            System.out.println(key);
+            this.redisTemplate.delete(key);
+        });
+
     }
 
 

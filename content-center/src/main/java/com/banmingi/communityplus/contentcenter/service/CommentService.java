@@ -17,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Comparator;
@@ -45,65 +46,70 @@ public class CommentService {
      * 评论
      * @param commentCreateDTO 实体
      */
+    @Transactional(rollbackFor = Exception.class)
     public void comment(CommentCreateDTO commentCreateDTO) {
         //1. 构建评论实体
-        Comment comment = Comment.builder()
-                .parentId(commentCreateDTO.getParentId())
-                .type(commentCreateDTO.getType())
-                .commentatorId(commentCreateDTO.getCommentatorId())
-                .content(commentCreateDTO.getContent())
-                .createTime(System.currentTimeMillis())
-                .build();
+        Comment comment = new Comment();
+        BeanUtils.copyProperties(commentCreateDTO,comment);
+        comment.setCreateTime(System.currentTimeMillis());
 
-        //2. 针对文章的评论
-        if(comment.getType().equals(CommentTypeEnum.ARTICLE.getType())) {
-            this.commentMapper.insert(comment);
-            //看缓存中是否有文章
-            String key = ARTICLE_ID_KEY + comment.getParentId();
-            ArticleDTO articleDTO =
-                    (ArticleDTO) this.redisTemplate.opsForValue().get(key);
-            if (articleDTO != null) {
-                //更新缓存文章评论数 +1
-                articleDTO.setCommentCount(articleDTO.getCommentCount() + 1);
-                this.redisTemplate.opsForValue().set(key,articleDTO,7L, TimeUnit.DAYS);
-                //更新数据库
-                Article article = new Article();
-                BeanUtils.copyProperties(articleDTO,article);
-                this.articleMapper.updateById(article);
-                return;
-            }
-            //缓存中没有文章的话,直接更新数据库
-            Article article = this.articleMapper.selectById(comment.getParentId());
-            article.setCommentCount(article.getCommentCount() + 1);
-            this.articleMapper.updateById(article);
-        } else {//3. 针对评论的回复
-            this.commentMapper.insert(comment);
+        //2. 评论插入数据库
+        this.commentMapper.insert(comment);
+
+        //3. 如果是二级评论的话,针对这条评论的评论数要 +1
+        if (comment.getType().equals(CommentTypeEnum.COMMENT.getType())){
             //更新数据库
+            // 更新评论列表的回复数
+            Comment listComment = this.commentMapper.selectById(comment.getCommentListId());
+            listComment.setCommentCount(listComment.getCommentCount() + 1);
+            this.commentMapper.updateById(listComment);
+            //更新父评论的回复数
             Comment parentComment = this.commentMapper.selectById(comment.getParentId());
             parentComment.setCommentCount(parentComment.getCommentCount() + 1);
             this.commentMapper.updateById(parentComment);
         }
+
+        //4. 文章评论数显示的是总的评论数,所以页要 +1
+        //看缓存中是否有文章
+        String key = ARTICLE_ID_KEY + comment.getArticleId();
+        ArticleDTO articleDTO =
+                (ArticleDTO) this.redisTemplate.opsForValue().get(key);
+        if (articleDTO != null) {
+            //更新缓存文章评论数 +1
+            articleDTO.setCommentCount(articleDTO.getCommentCount() + 1);
+            this.redisTemplate.opsForValue().set(key,articleDTO,7L, TimeUnit.DAYS);
+            //更新数据库
+            Article article = new Article();
+            BeanUtils.copyProperties(articleDTO,article);
+            this.articleMapper.updateById(article);
+            return;
+        }
+        //缓存中没有文章的话,直接更新数据库
+        Article article = this.articleMapper.selectById(comment.getArticleId());
+        article.setCommentCount(article.getCommentCount() + 1);
+        this.articleMapper.updateById(article);
 
     }
 
 
     /**
      * 获取评论列表.
-     * @param parentId 列表parentId
+     * @param commentListId 响应评论列表集合的id：
      * @param type 类型
      * @return 评论列表
      */
-    public List<CommentDTO> getCommentList(Integer parentId, Integer type) {
+    public List<CommentDTO> getCommentList(Integer commentListId, Integer type) {
         //1. 根据条件查询评论列表
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("parent_id",parentId).eq("type",type);
+        queryWrapper.eq("comment_list_id",commentListId).eq("type",type);
         List<Comment> commentList = this.commentMapper.selectList(queryWrapper);
         if (CollectionUtils.isEmpty(commentList)) {
             return null;
         }
 
-        //2. 根据创建时间从打到小排序评论列表
+        //2. 根据点赞数和创建时间从打到小排序评论列表
         commentList = commentList.stream()
+                .sorted(Comparator.comparingInt(Comment::getLikeCount).reversed())
                 .sorted(Comparator.comparingLong(Comment::getCreateTime).reversed())
                 .collect(Collectors.toList());
 

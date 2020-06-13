@@ -25,6 +25,18 @@ public class CommentDTO implements Serializable {
     private Integer id;
 
     /**
+     * 文章id
+     */
+    private Integer articleId;
+
+    /**
+     * 评论列表的id：
+     * 比如一级评论列表comment_list_id是该文章id,
+     * 二级评论列表是对应一级评论的id(该一级评论下有多条二级评论,但二级评论的parentId不仅仅只是该一级评论,也可能是该一级评论下的其他二级评论)
+     */
+    private Integer commentListId;
+
+    /**
      * 该评论的父id: 文章id或者评论id,根据type来区分
      */
     private Integer parentId;

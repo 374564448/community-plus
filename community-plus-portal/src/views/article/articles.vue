@@ -177,8 +177,8 @@
                   <span>更新于&nbsp;{{getTheDateDiff(articleDTO.modifyTime)}}</span>
                 </div>
                 <!--编辑按钮-->
-                <div class="edit" v-if="this.$store.getters.getUser.id===articleDTO.userDTO.id"><i class="iconfont"
-                                                                                                   style="font-size: 13px;">&#xe66d;</i>编辑
+                <div class="edit" v-show="userId===articleDTO.userDTO.id">
+                  <i class="iconfont" style="font-size: 13px;">&#xe66d;</i>编辑
                 </div>
               </div>
               <div style="height: 13px;border-bottom: 1px solid #C0C4CC"></div>
@@ -245,60 +245,66 @@
                             <i class="iconfont" style="font-size: 15px;">&#xe60a;</i>&nbsp;{{commentDTO.likeCount}}
                           </div>
                           <!-- 展开二级评论按钮 -->
-                          <div :class="['comment-second-show-button',{'comment-second-show-button-show':commentSecondShow}]"
-                               @click="showCommentSecondList(commentDTO.id,2)">
+                          <div :class="['comment-second-show-button',{'comment-second-show-button-show':commentDTO.commentSecondShow}]"
+                               @click="showCommentSecondList(commentDTO)">
                             <i class="iconfont" style="font-size: 15px;">&#xe604;</i>&nbsp;{{commentDTO.commentCount}}
                           </div>
                           <!--删除评论按钮-->
-                          <div class="comment-delete-button">
+                          <div v-show="userId===commentDTO.commentatorId" class="comment-delete-button">
                             <i class="iconfont" style="font-size: 15px;">&#xe63d;</i>
                           </div>
                         </div>
                         <!-- 二级评论框-->
                         <div>
                           <el-collapse-transition>
-                            <div v-show="commentSecondShow" class="comment-second-box">
+                            <div v-show="commentDTO.commentSecondShow" class="comment-second-box">
                               <!--二级评论输入框-->
                               <div>
                                 <el-input placeholder="回复..."
-                                          ref="commentSecondInput"
-                                          v-model="commentSecondContent"
+                                          v-model="commentDTO.commentSecondContent"
+                                          :ref="'commentSecondInput'+index"
                                           class="input-with-select">
-                                  <el-button slot="append">评论</el-button>
+                                  <el-button slot="append" @click="commentCreate(commentDTO.id,commentDTO.currentCommentId,2,commentDTO.commentSecondContent)">评论</el-button>
                                 </el-input>
                               </div>
                               <!--二级评论列表-->
-                              <div class="comment-second-list-box">
+                              <div class="comment-second-list-box" v-for="(commentSecondDTO,index2) in commentDTO.commentSecondDTOList" :key="index2">
                                 <div class="commentator-second-name-box">
                                   <!--头像-->
-                                  <div style="float: left">
-                                    <img :src="articleDTO.userDTO.avatarUrl"
-                                         style="height: 26px;width: 26px;margin: 2px"/>
+                                  <div style="float: left;">
+                                    <img :src="commentSecondDTO.userDTO.avatarUrl"
+                                         style="height: 26px;width: 26px;margin: 2px;border-radius: 3px"/>
                                   </div>
                                   <!--名字-->
                                   <div class="commentator-second-name">
-                                    飞龙在天
+                                    <span v-show="commentSecondDTO.commentatorId === articleDTO.userDTO.id" class="commentatorIsAuthor">作者</span>
+                                    {{commentSecondDTO.userDTO.name}}
                                   </div>
                                   <!--评论时间-->
-                                  <div class="commentator-second-comment-time">一周前</div>
+                                  <div class="commentator-second-comment-time">{{getTheDateDiff(commentSecondDTO.createTime)}}</div>
                                 </div>
                                 <!--评论内容-->
                                 <div class="commentator-second-content-box">
-                                  贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老贼棒，学到老活到老
+                                  <!-- 被回复者的名字 -->
+                                  <span class="commentedName" v-show="commentSecondDTO.commentedName">
+                                    {{commentSecondDTO.commentedName}}
+                                  </span>
+                                  <!-- 内容 -->
+                                  {{commentSecondDTO.content}}
                                 </div>
                                 <!--操作此评论：点赞、评论-->
                                 <div class="comment-second-action">
                                   <!-- 点赞按钮和点赞数 -->
                                   <div :class="['comment-second-like-button',{'comment-like-second-button-clicked':commentSecondLikeFlag}]"
                                        @click="commentSecondLikeFlag=!commentSecondLikeFlag">
-                                    <i class="iconfont" style="font-size: 15px;">&#xe60a;</i>&nbsp;0
+                                    <i class="iconfont" style="font-size: 15px;">&#xe60a;</i>&nbsp;{{commentSecondDTO.likeCount}}
                                   </div>
                                   <!-- 评论此条评论 -->
-                                  <div class="comment-second-button">
+                                  <div class="comment-second-button" @click="turnCommentSecondInput(commentDTO,commentSecondDTO,index)">
                                     <i class="iconfont" style="font-size: 15px;">&#xe604;</i>
                                   </div>
                                   <!--删除此条评论-->
-                                  <div class="comment-second-delete-button">
+                                  <div v-show="userId===commentSecondDTO.commentatorId" class="comment-second-delete-button">
                                     <i class="iconfont" style="font-size: 15px;">&#xe63d;</i>
                                   </div>
                                 </div>
@@ -315,7 +321,7 @@
             </div>
 
             <!--评论文本输入框-->
-            <div class="comment-area" ref="commentBox">
+            <div class="comment-area" ref="commentInputBox">
               <!-- 警告 -->
               <div class="comment-warning">
                 <i class="iconfont" style="font-size: 16px;">&#xe62f;</i>
@@ -334,7 +340,7 @@
               </el-input>
               <!--评论按钮-->
               <div style="margin-top: 15px;padding-bottom:25px;position: relative"
-                   @click="commentCreate(articleDTO.id,1)">
+                   @click="commentCreate(articleDTO.id,articleDTO.id,1,commentContent)">
                 <button class="comment-button"><i class="el-icon-chat-dot-round">&nbsp;</i>评论</button>
               </div>
             </div>
@@ -399,17 +405,17 @@
       //文章详情
       this.getArticleDTOById(this.$route.params.id);
       //一级评论列表
-      this.commentList(this.$route.params.id,1)
+      this.commentList(this.$route.params.id,1,null)
     },
     data() {
       return {
         //样式相关
         //一级评论点赞或取消点赞
         commentLikeFlag: false,
-        //展开或关闭二级评论框
-        commentSecondShow: false,
         //二级评论点赞或取消点赞
         commentSecondLikeFlag: false,
+
+        userId: this.$store.getters.getUser.id,
 
         //文章详情
         articleDTO: {
@@ -428,8 +434,10 @@
           userDTO: {id: '', accountType: '', name: '', avatarUrl: '', bio: '', bonus: ''}
         },
 
-        //评论
+        //创建评论
         commentCreateDTO: {
+          articleId: '',
+          commentListId: '',
           parentId: '',
           commentatorId: '',
           type: '',
@@ -437,12 +445,11 @@
         },
         //一级评论的内容
         commentContent: '',
-        //二级评论的内容
-        commentSecondContent: '',
+        // //二级评论的内容
+        // commentSecondContent: '',
         //一级评论列表
         commentDTOList: [],
-        //二级评论列表
-        commentSecondDTOList: []
+        //二级评论列表在获取数据时动态添加到一级评论列表中
       }
     },
 
@@ -475,67 +482,36 @@
        */
       turnCommentInput(){
         //定位
-        this.$refs.commentBox.scrollIntoView();
+        this.$refs.commentInputBox.scrollIntoView();
         //input获取焦点
         this.$refs.commentInput.focus()
       },
       /**
-       *定位到二级评论框
+       * 创建评论
        */
-      turnCommentSecondInput() {
-        this.$refs.commentSecondInput.focus()
-      },
-
-      /**
-       *展开二级评论列表
-       */
-      showCommentSecondList(parentId,type) {
-        if (!this.commentSecondShow) {
-          this.commentList(parentId,type);
-        }
-        this.commentSecondShow=!this.commentSecondShow;
-      },
-
-      /**
-       * 评论
-       */
-      commentCreate(parentId,type) {
+      commentCreate(commentListId,parentId,type,content) {
         //评论前先校验
         //判断是否已登录
-        const isLogin = this.$store.getters.getUser.id;
-        if (!isLogin) {
+        if (!this.userId) {
           this.$message({
             message: '你必须登录之后才能评论！',
             type: 'warning'
           });
           return;
         }
+        this.commentCreateDTO.articleId = this.articleDTO.id;
+        this.commentCreateDTO.commentListId = commentListId;
         this.commentCreateDTO.parentId = parentId;
         this.commentCreateDTO.commentatorId = this.$store.getters.getUser.id;
         this.commentCreateDTO.type = type;
-        //一级评论
-        if (type === 1) {
-          //一级评论内容不能为空
-          if (!this.commentContent) {
-            this.$message({
-              message: '评论内容不能为空！',
-              type: 'warning'
-            });
-            return;
-          }
-          this.commentCreateDTO.content = this.commentContent;
-        }
-        //二级评论
-        else if (type === 2) {
-          //一级评论内容不能为空
-          if (!this.commentSecondContent) {
-            this.$message({
-              message: '评论内容不能为空！',
-              type: 'warning'
-            });
-            return;
-          }
-          this.commentCreateDTO.content = this.commentSecondContent;
+        this.commentCreateDTO.content = content;
+        //评论内容不能为空
+        if (!content) {
+          this.$message({
+            message: '评论内容不能为空！',
+            type: 'warning'
+          });
+          return;
         }
         //请求后端api发布评论
         request({
@@ -554,28 +530,89 @@
         })
       },
 
+
+      /**
+       * 点赞
+       */
+      commentAddLike(index) {
+
+      },
+
+      /**
+       *定位到二级评论框
+       */
+      turnCommentSecondInput(dto,dto2,index) {
+        //修改被评论的id
+        dto.currentCommentId = dto2.id
+        //二级评论输入框添加前缀
+        dto.commentSecondContent = '';
+        //如果被回复的是作者
+        if (dto2.commentatorId === this.articleDTO.userDTO.id) {
+          dto.commentSecondContent = "@" + dto2.userDTO.name+" (作者): "
+        } else {
+          //如果被回复的是普通评论者
+          dto.commentSecondContent = "@" + dto2.userDTO.name+": ";
+        }
+        //聚焦到二级评论输入框
+        this.$refs['commentSecondInput'+index][0].focus();
+      },
+
+      /**
+       *展开二级评论列表
+       */
+      showCommentSecondList(dto) {
+        if (!dto.commentSecondShow) {
+          //获取二级评论
+          this.commentList(dto.id,2,dto);
+          //为列表添加字段
+          //this.$set(你要添加数据的数组或对象, '字段名称', 字段值)
+          this.$set(dto,'commentSecondShow',false);
+          dto.commentSecondShow = !dto.commentSecondShow;
+        } else {
+          dto.commentSecondShow = !dto.commentSecondShow;
+        }
+      },
+
       /**
        * 获取评论列表
-       * @param parentId
+       * @param commentListId
        * @param type
+       * @param dto
        */
-      commentList(parentId,type) {
+      commentList(commentListId,type,dto) {
         request.get(GET_COMMENT_LIST_URL, {
           params: {
-            parentId: parentId,
+            commentListId: commentListId,
             type: type
           }
         }).then(({data}) => {
           if (type === 1) {
+            data.forEach(i => {
+              //新增一个属性,绑定二级评论输入框内容
+              i.commentSecondContent = ''
+              //新增一个属性,用做创建二级评论时被评论的id,初始值为当前一级评论的id
+              i.currentCommentId = i.id;
+            })
             this.commentDTOList = data
           }
           if (type === 2) {
-            this.commentSecondDTOList = data
+            //在一级评论列表新增一个属性,接收二级评论列表
+            data.forEach(i => {
+              if (i.commentListId !== i.parentId) {
+                //如果是针对某个二级评论的回复,就从评论内容中截取出被回复者的名字和回复内容,名字添加到评论的属性中
+                let index = i.content.indexOf(":");
+                i.commentedName = i.content.substring(0,index+1);
+                //冒号前面还有空格,所以index+2
+                i.content = i.content.substring(index+2,i.content.length);
+              }
+            })
+            this.$set(dto,'commentSecondDTOList',data);
           }
         }).catch( err => {
           console.log(err)
         })
-      }
+      },
+
 
     }
   }
