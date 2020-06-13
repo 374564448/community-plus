@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +53,18 @@ public class CommentController {
                                                            @RequestParam("type") Integer type) {
         List<CommentDTO> commentDTOList = this.commentService.getCommentList(commentListId,type);
         return ResponseEntity.ok(commentDTOList);
+    }
+
+    /**
+     * 删除评论.
+     * @param id 评论id
+     * @return 状态
+     */
+    @DeleteMapping("/delete/{id}")
+    @CheckLogin
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        this.commentService.delete(id);
+        return ResponseEntity.ok().build();
     }
 
 }

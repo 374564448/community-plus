@@ -250,7 +250,8 @@
                             <i class="iconfont" style="font-size: 15px;">&#xe604;</i>&nbsp;{{commentDTO.commentCount}}
                           </div>
                           <!--删除评论按钮-->
-                          <div v-show="userId===commentDTO.commentatorId" class="comment-delete-button">
+                          <div v-show="userId===commentDTO.commentatorId" class="comment-delete-button"
+                               @click="deleteComment(commentDTO.id)">
                             <i class="iconfont" style="font-size: 15px;">&#xe63d;</i>
                           </div>
                         </div>
@@ -304,7 +305,8 @@
                                     <i class="iconfont" style="font-size: 15px;">&#xe604;</i>
                                   </div>
                                   <!--删除此条评论-->
-                                  <div v-show="userId===commentSecondDTO.commentatorId" class="comment-second-delete-button">
+                                  <div v-show="userId===commentSecondDTO.commentatorId"
+                                       class="comment-second-delete-button" @click="deleteComment(commentSecondDTO.id)">
                                     <i class="iconfont" style="font-size: 15px;">&#xe63d;</i>
                                   </div>
                                 </div>
@@ -397,7 +399,7 @@
 <script>
   import request from "@/utils/request";
   import {getDateDiff} from "@/utils/common";
-  import {ARTICLE_DETAIL_URL, COMMENT_CREATE_URL, GET_COMMENT_LIST_URL} from "@/utils/api";
+  import {ARTICLE_DETAIL_URL, COMMENT_CREATE_URL, GET_COMMENT_LIST_URL, DELETE_COMMENT_URL} from "@/utils/api";
 
   export default {
     name: "articles",
@@ -417,6 +419,9 @@
 
         userId: this.$store.getters.getUser.id,
 
+        /**
+         * 文章
+         */
         //文章详情
         articleDTO: {
           id: '',
@@ -434,6 +439,10 @@
           userDTO: {id: '', accountType: '', name: '', avatarUrl: '', bio: '', bonus: ''}
         },
 
+
+        /**
+         *  评论
+         */
         //创建评论
         commentCreateDTO: {
           articleId: '',
@@ -532,7 +541,7 @@
 
 
       /**
-       * 点赞
+       * 评论点赞
        */
       commentAddLike(index) {
 
@@ -612,6 +621,31 @@
           console.log(err)
         })
       },
+
+      /**
+       * 删除评论
+       * @param id
+       */
+      deleteComment(id) {
+        this.$confirm('你确定要删除该条评论吗?', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          //请求后台删除评论
+          request.delete(DELETE_COMMENT_URL + id).then(() => {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            });
+            location.reload();
+          }).catch( err => {
+            console.log(err);
+            this.$message.error('服务器异常，请稍后再试！');
+          })
+        }).catch(() => {
+        });
+      }
 
 
     }

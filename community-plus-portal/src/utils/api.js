@@ -37,6 +37,7 @@ export const ARTICLE_DETAIL_URL = ARTICLE_API_URL + '/';
 export const COMMENT_API_URL = BASE_API_URL + "/comment"
 export const COMMENT_CREATE_URL = COMMENT_API_URL + "/"
 export const GET_COMMENT_LIST_URL = COMMENT_API_URL + "/list"
+export const DELETE_COMMENT_URL = COMMENT_API_URL + "/delete/"
 
 
 

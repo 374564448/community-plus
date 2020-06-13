@@ -37,50 +37,52 @@ public class CommentService {
 
     private final CommentMapper commentMapper;
     private final ArticleMapper articleMapper;
-    private final RedisTemplate<String,Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final UserFeignClient userFeignClient;
 
     private static final String ARTICLE_ID_KEY = "article:id:";
 
     /**
      * 评论
+     *
      * @param commentCreateDTO 实体
      */
     @Transactional(rollbackFor = Exception.class)
     public void comment(CommentCreateDTO commentCreateDTO) {
         //1. 构建评论实体
         Comment comment = new Comment();
-        BeanUtils.copyProperties(commentCreateDTO,comment);
+        BeanUtils.copyProperties(commentCreateDTO, comment);
         comment.setCreateTime(System.currentTimeMillis());
 
         //2. 评论插入数据库
         this.commentMapper.insert(comment);
 
         //3. 如果是二级评论的话,针对这条评论的评论数要 +1
-        if (comment.getType().equals(CommentTypeEnum.COMMENT.getType())){
+        if (comment.getType().equals(CommentTypeEnum.COMMENT.getType())) {
             //更新数据库
             // 更新评论列表的回复数
             Comment listComment = this.commentMapper.selectById(comment.getCommentListId());
             listComment.setCommentCount(listComment.getCommentCount() + 1);
             this.commentMapper.updateById(listComment);
+
             //更新父评论的回复数
-            Comment parentComment = this.commentMapper.selectById(comment.getParentId());
-            parentComment.setCommentCount(parentComment.getCommentCount() + 1);
-            this.commentMapper.updateById(parentComment);
+            if (!comment.getCommentListId().equals(comment.getParentId())) {
+                Comment parentComment = this.commentMapper.selectById(comment.getParentId());
+                parentComment.setCommentCount(parentComment.getCommentCount() + 1);
+                this.commentMapper.updateById(parentComment);
+            }
         }
 
-        //4. 文章评论数显示的是总的评论数,所以页要 +1
+        //4. 文章评论数显示的是总的评论数,所以要 +1
         //看缓存中是否有文章
-        String key = ARTICLE_ID_KEY + comment.getArticleId();
-        ArticleDTO articleDTO =
-                (ArticleDTO) this.redisTemplate.opsForValue().get(key);
+        ArticleDTO articleDTO = getArticleFromCache(comment.getArticleId());
         if (articleDTO != null) {
             //更新缓存文章评论数 +1
             articleDTO.setCommentCount(articleDTO.getCommentCount() + 1);
-            this.redisTemplate.opsForValue().set(key,articleDTO,7L, TimeUnit.DAYS);
+            this.redisTemplate.opsForValue().set(ARTICLE_ID_KEY + comment.getArticleId(), articleDTO, 7L, TimeUnit.DAYS);
             //更新数据库
             Article article = new Article();
-            BeanUtils.copyProperties(articleDTO,article);
+            BeanUtils.copyProperties(articleDTO, article);
             this.articleMapper.updateById(article);
             return;
         }
@@ -94,14 +96,15 @@ public class CommentService {
 
     /**
      * 获取评论列表.
+     *
      * @param commentListId 响应评论列表集合的id：
-     * @param type 类型
+     * @param type          类型
      * @return 评论列表
      */
     public List<CommentDTO> getCommentList(Integer commentListId, Integer type) {
         //1. 根据条件查询评论列表
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("comment_list_id",commentListId).eq("type",type);
+        queryWrapper.eq("comment_list_id", commentListId).eq("type", type);
         List<Comment> commentList = this.commentMapper.selectList(queryWrapper);
         if (CollectionUtils.isEmpty(commentList)) {
             return null;
@@ -120,15 +123,74 @@ public class CommentService {
 
         //4. 根据commentatorIdList获取评论人信息列表,并转换为map
         List<UserDTO> userDTOList = this.userFeignClient.findListByIds(commentatorIdList);
-        Map<Integer,UserDTO> userDTOMap =
-                userDTOList.stream().collect(Collectors.toMap(UserDTO::getId, userDTO ->userDTO));
+        Map<Integer, UserDTO> userDTOMap =
+                userDTOList.stream().collect(Collectors.toMap(UserDTO::getId, userDTO -> userDTO));
 
         //5. 转换 commentList 为commentDTOList并返回
         return commentList.stream().map(comment -> {
             CommentDTO commentDTO = new CommentDTO();
-            BeanUtils.copyProperties(comment,commentDTO);
+            BeanUtils.copyProperties(comment, commentDTO);
             commentDTO.setUserDTO(userDTOMap.get(commentDTO.getCommentatorId()));
             return commentDTO;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 删除评论.
+     *
+     * @param id 评论id
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(Integer id) {
+        Comment comment = this.commentMapper.selectById(id);
+        //计算被应该减去的评论数 count
+        Integer count = comment.getType().equals(CommentTypeEnum.ARTICLE.getType())?(comment.getCommentCount() + 1):1;
+        //删除该评论
+        this.commentMapper.deleteById(id);
+        //如果被删除的是二级评论
+        if (comment.getType().equals(CommentTypeEnum.COMMENT.getType())) {
+            //更新数据库
+            // 更新评论列表的回复数
+            Comment listComment = this.commentMapper.selectById(comment.getCommentListId());
+            listComment.setCommentCount(listComment.getCommentCount() - 1);
+            this.commentMapper.updateById(listComment);
+
+            //更新父评论的回复数
+            if (!comment.getCommentListId().equals(comment.getParentId())) {
+                Comment parentComment = this.commentMapper.selectById(comment.getParentId());
+                parentComment.setCommentCount(parentComment.getCommentCount() - 1);
+                this.commentMapper.updateById(parentComment);
+            }
+        }
+
+        //更新文章的评论数
+        //文章评论数显示的是总的评论数,所以总评论数要 -count
+        //看缓存中是否有文章
+        ArticleDTO articleDTO = getArticleFromCache(comment.getArticleId());
+        if (articleDTO != null) {
+            //更新缓存文章评论数 +1
+            articleDTO.setCommentCount(articleDTO.getCommentCount() - count);
+            this.redisTemplate.opsForValue().set(ARTICLE_ID_KEY + comment.getArticleId(), articleDTO, 7L, TimeUnit.DAYS);
+            //更新数据库
+            Article article = new Article();
+            BeanUtils.copyProperties(articleDTO, article);
+            this.articleMapper.updateById(article);
+            return;
+        }
+        //缓存中没有文章的话,直接更新数据库 总评论数 -count
+        Article article = this.articleMapper.selectById(comment.getArticleId());
+        article.setCommentCount(article.getCommentCount() - count);
+        this.articleMapper.updateById(article);
+    }
+
+    /**
+     * 从缓存中查找文章详情
+     *
+     * @param id 文章id
+     * @return 文章详情
+     */
+    private ArticleDTO getArticleFromCache(Integer id) {
+        String key = ARTICLE_ID_KEY + id;
+        return (ArticleDTO) this.redisTemplate.opsForValue().get(key);
     }
 }
