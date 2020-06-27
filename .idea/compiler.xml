@@ -8,11 +8,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="gateway" />
-        <module name="content-center" />
         <module name="common" />
+        <module name="notification-center" />
+        <module name="content-center" />
         <module name="cloud-center" />
         <module name="user-center" />
-        <module name="sms-center" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -26,7 +26,7 @@
       <module name="gateway" target="1.8" />
       <module name="gatewayr (1)" target="1.8" />
       <module name="gatewayr (2)" target="1.8" />
-      <module name="sms-center" target="1.8" />
+      <module name="notification-center" target="1.8" />
       <module name="user-center" target="1.8" />
     </bytecodeTargetLevel>
   </component>
@@ -39,7 +39,7 @@
       <module name="gateway" options="-parameters" />
       <module name="gatewayr (1)" options="-parameters" />
       <module name="gatewayr (2)" options="-parameters" />
-      <module name="sms-center" options="-parameters" />
+      <module name="notification-center" options="-parameters" />
       <module name="user-center" options="-parameters" />
     </option>
   </component>

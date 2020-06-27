@@ -55,8 +55,12 @@
                   fit="fill"/>
               </div>
               <!-- 文章标题 -->
-              <div class="article-list-title" @click="articleDetail(i.id)">{{i.title}}
-                <div class="article-list-newFlag" v-if="new Date().getTime()-i.createTime<259200000">new</div>
+              <div class="article-list-title" >
+                <router-link :to="'/articles/'+i.id">
+                  {{i.title}}
+                  <div class="article-list-newFlag" v-if="new Date().getTime()-i.createTime<259200000">new</div>
+                </router-link>
+
               </div>
               <!-- 阅览、点赞、评论等-->
               <div class="article-list-publishTime">

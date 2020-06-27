@@ -1,0 +1,43 @@
+server:
+  port: 9020
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/community_notification_center?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true
+    hikari:
+      username: root
+      password: wen175924
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    # nacos
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    # rocketMq
+    stream:
+      rocketmq:
+        binder:
+          name-server: 127.0.0.1:9876
+      bindings:
+        input:
+          #指定topic
+          destination: CheckCode-Topic
+          group: CheckCode-Group
+
+  application:
+    name: sms-center
+  main:
+    allow-bean-definition-overriding: true
+  #邮箱发送设置
+  mail:
+    host: smtp.qq.com
+    #发件人
+    username: 374564448@qq.com
+    #QQ邮箱授权码
+    password: rebrfjqhjbyzbjid
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true

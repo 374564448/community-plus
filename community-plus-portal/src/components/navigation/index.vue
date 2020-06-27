@@ -29,8 +29,11 @@
         </div>
         <!--通知按钮-->
         <div class="notice">
-          <i class="iconfont" style="font-size: 28px;">&#xe7e2;</i>
-          <div class="count">99+</div>
+          <router-link to="/notifications">
+            <i class="iconfont" style="font-size: 28px;">&#xe7e2;</i>
+            <div class="count">99+</div>
+          </router-link>
+
         </div>
         <el-dropdown placement="bottom" style="height: 44px">
             <!-- 头像 -->
@@ -188,6 +191,7 @@
         turnToIndex() {
           window.location.href = "/";
         },
+
 
         /**
          * 关闭页面之前重置表单验证规则的显示

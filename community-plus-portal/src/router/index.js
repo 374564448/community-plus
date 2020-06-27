@@ -8,7 +8,8 @@ import register from "@/views/user/register";
 import publish from "@/views/article/publish";
 import articles from "@/views/article/articles";
 import error from "@/views/error";
-
+import notifications from "@/views/notification/notifications";
+import notification from "@/views/notification/notification";
 
 // 安装路由
 Vue.use(Router);
@@ -42,12 +43,20 @@ export default new Router({
       name: 'articles',
       component: articles
     },
-
+    {
+      path: '/notifications',
+      name: '',
+      component: notifications,
+      children: [
+        {path: '',name: 'notification',component: notification}
+      ]
+    },
     {
       path: '*',
       name: 'error',
       component: error
     }
+
 
 
   ]

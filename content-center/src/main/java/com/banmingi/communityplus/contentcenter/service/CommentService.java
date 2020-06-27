@@ -93,47 +93,76 @@ public class CommentService {
 
     }
 
-
     /**
-     * 获取评论列表.
-     *
-     * @param commentListId 响应评论列表集合的id：
-     * @param type          类型
-     * @return 评论列表
+     * 根据文章id查找其文章下的所有评论
+     * @param articleId 文章id
+     * @return 评论详情集合
      */
-    public List<CommentDTO> getCommentList(Integer commentListId, Integer type) {
+    public List<CommentDTO> getCommentList(Integer articleId) {
         //1. 根据条件查询评论列表
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("comment_list_id", commentListId).eq("type", type);
+        queryWrapper.eq("article_id", articleId);
         List<Comment> commentList = this.commentMapper.selectList(queryWrapper);
         if (CollectionUtils.isEmpty(commentList)) {
             return null;
         }
 
-        //2. 根据点赞数和创建时间从打到小排序评论列表
+        //1. 根据点赞数和创建时间从大到小排序评论列表
         commentList = commentList.stream()
                 .sorted(Comparator.comparingInt(Comment::getLikeCount).reversed())
                 .sorted(Comparator.comparingLong(Comment::getCreateTime).reversed())
                 .collect(Collectors.toList());
 
-        //3. 获取去重的评论人
-        List<Integer> commentatorIdList
-                = commentList.stream().map(Comment::getCommentatorId).distinct()
-                .collect(Collectors.toList());
+        //2. 分离出去重的评论人
+        Map<Integer,UserDTO> userDTOMap = this.getUserDTOMapByCommentList(commentList);
 
-        //4. 根据commentatorIdList获取评论人信息列表,并转换为map
-        List<UserDTO> userDTOList = this.userFeignClient.findListByIds(commentatorIdList);
-        Map<Integer, UserDTO> userDTOMap =
-                userDTOList.stream().collect(Collectors.toMap(UserDTO::getId, userDTO -> userDTO));
-
-        //5. 转换 commentList 为commentDTOList并返回
-        return commentList.stream().map(comment -> {
+        //3.1 分离出一级评论
+        List<Comment> commentFirstList = commentList.stream()
+                .filter(comment -> comment.getType().equals(1)).collect(Collectors.toList());
+        //3.2 一级评论 commentList -> commentDTOList
+        List<CommentDTO> commentFirstDTOList = commentFirstList.stream().map(comment -> {
             CommentDTO commentDTO = new CommentDTO();
             BeanUtils.copyProperties(comment, commentDTO);
             commentDTO.setUserDTO(userDTOMap.get(commentDTO.getCommentatorId()));
             return commentDTO;
         }).collect(Collectors.toList());
+
+        //4.1 分离出二级评论
+        List<Comment> commentSecondList = commentList.stream()
+                .filter(comment -> comment.getType().equals(2)).collect(Collectors.toList());
+        //4.2 二级评论 commentList -> commentDTOList
+        List<CommentDTO> commentSecondDTOList = commentSecondList.stream().map(comment -> {
+            CommentDTO commentDTO = new CommentDTO();
+            BeanUtils.copyProperties(comment, commentDTO);
+            commentDTO.setUserDTO(userDTOMap.get(commentDTO.getCommentatorId()));
+            return commentDTO;
+        }).collect(Collectors.toList());
+
+        //5. 通过commentListId区分,把commentSecondDTOList装载到对应的commentFirstDTOList中
+        commentFirstDTOList = commentFirstDTOList.stream().peek(commentFirst ->{
+            List<CommentDTO> collect = commentSecondDTOList.stream()
+                    .filter(commentDTO -> commentDTO.getCommentListId().equals(commentFirst.getId()))
+                    .collect(Collectors.toList());
+            commentFirst.setCommentSecondDTOList(collect);
+        }).collect(Collectors.toList());
+
+        return commentFirstDTOList;
     }
+    /**
+     * 根据评论列表获取去重的评论人信息
+     * @param commentList 论列表
+     * @return 评论人信息Map
+     */
+    private Map<Integer,UserDTO> getUserDTOMapByCommentList(List<Comment> commentList) {
+        //获取去重的评论人id
+        List<Integer> userIdList = commentList.stream()
+                .map(Comment::getCommentatorId).distinct()
+                .collect(Collectors.toList());
+        //根据id获取二级评论的用户信息表,并转换为map
+        List<UserDTO> userDTOSecondList = this.userFeignClient.findListByIds(userIdList);
+        return userDTOSecondList.stream().collect(Collectors.toMap(UserDTO::getId,userDTO -> userDTO));
+    }
+
 
     /**
      * 删除评论.

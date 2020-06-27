@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author 半命i 2020/6/12
@@ -75,6 +76,11 @@ public class CommentDTO implements Serializable {
      * 评论者
      */
     private UserDTO userDTO;
+
+    /**
+     * 二级评论列表.
+     */
+    private List<CommentDTO> commentSecondDTOList;
 
 
 }

@@ -1,6 +1,7 @@
 package com.banmingi.communityplus.contentcenter;
 
-import com.banmingi.communityplus.contentcenter.mapper.ArticleMapper;
+import com.banmingi.communityplus.contentcenter.dto.comment.CommentDTO;
+import com.banmingi.communityplus.contentcenter.service.CommentService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -21,7 +23,8 @@ public class ContentCenterApplicationTest {
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
     @Autowired
-    private ArticleMapper articleMapper;
+    private CommentService commentService;
+
 
     @Test
     public void test() {
@@ -33,7 +36,14 @@ public class ContentCenterApplicationTest {
         });
 
     }
-
+    @Test
+    public void test2() {
+        List<CommentDTO> commentList = this.commentService.getCommentList(13);
+        commentList.forEach(commentDTO -> {
+            System.out.println(commentDTO);
+            commentDTO.getCommentSecondDTOList().forEach(System.out::println);
+        });
+    }
 
 
 }

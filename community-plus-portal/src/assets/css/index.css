@@ -1,3 +1,7 @@
+a {
+  text-decoration: none;
+}
+
 .index-box {
   margin: 40px 160px 100px 160px;
   color: #888888;
@@ -92,6 +96,9 @@
   overflow: hidden;
   text-overflow:ellipsis;
   white-space: nowrap;
+}
+.article-list-title a {
+  color: #888888;
 }
 .article-list-newFlag {
  display: inline-block;

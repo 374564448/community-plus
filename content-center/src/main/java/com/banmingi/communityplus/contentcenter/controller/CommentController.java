@@ -44,14 +44,12 @@ public class CommentController {
 
     /**
      * 获取评论列表.
-     * @param commentListId 响应评论列表集合的id：
-     * @param type 类型
+     * @param articleId 文章id
      * @return 评论列表
      */
     @GetMapping("/list")
-    public ResponseEntity<List<CommentDTO>> getCommentList(@RequestParam("commentListId") Integer commentListId,
-                                                           @RequestParam("type") Integer type) {
-        List<CommentDTO> commentDTOList = this.commentService.getCommentList(commentListId,type);
+    public ResponseEntity<List<CommentDTO>> getCommentList(@RequestParam("articleId") Integer articleId) {
+        List<CommentDTO> commentDTOList = this.commentService.getCommentList(articleId);
         return ResponseEntity.ok(commentDTOList);
     }
 
@@ -66,5 +64,7 @@ public class CommentController {
         this.commentService.delete(id);
         return ResponseEntity.ok().build();
     }
+
+
 
 }

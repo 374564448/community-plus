@@ -22,6 +22,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
 import java.util.HashMap;
@@ -208,12 +209,13 @@ public class UserService {
      * @return 用户信息集合
      */
     public List<UserDTO> findListByIds(List<Integer> ids) {
-        return ids.stream().map(id -> {
+        List<User> userList = this.userMapper.selectBatchIds(ids);
+        if (CollectionUtils.isEmpty(userList)) {
+            return null;
+        }
+        return userList.stream().map(user -> {
             UserDTO userDTO = new UserDTO();
-            User user = this.userMapper.selectById(id);
-            if (user != null) {
-                BeanUtils.copyProperties(user,userDTO);
-            }
+            BeanUtils.copyProperties(user,userDTO);
             return userDTO;
         }).collect(Collectors.toList());
     }
