@@ -262,11 +262,6 @@
                           <el-collapse-transition>
                             <div v-show="commentDTO.commentSecondShow" class="comment-second-box">
                               <div>
-                                <!--标签: 被回复的人-->
-                                <el-tag v-show="commentDTO.commentSecondParentName"
-                                        size="small" type="danger" closable @close="closeCommentTag(commentDTO)">
-                                  {{commentDTO.commentSecondParentName}}
-                                </el-tag>
                                 <!--二级评论输入框-->
                                 <el-input
                                   :placeholder="commentDTO.commentSecondParentName?commentDTO.commentSecondParentName:'回复...'"
@@ -275,6 +270,14 @@
                                   class="input-with-select"
                                   maxlength="1000"
                                 >
+                                  <!--取消评论此用户-->
+                                  <span v-if="commentDTO.commentSecondParentName" slot="prefix">
+                                    <el-tooltip content="取消评论此用户" placement="top" effect="light">
+                                      <i class="el-input__icon el-icon-circle-close cancel-comment-the-user"
+                                         @click="closeCommentTag(commentDTO)"></i>
+                                    </el-tooltip>
+                                  </span>
+
                                   <el-button slot="append"
                                              @click="commentCreate(commentDTO.id,commentDTO.currentCommentId,2,commentDTO.commentSecondParentName+commentDTO.commentSecondContent)">
                                     评论
@@ -619,10 +622,10 @@
         dto.commentSecondContent = '';
         //如果被回复的是作者
         if (dto2.commentatorId === this.articleDTO.userDTO.id) {
-          dto.commentSecondParentName = "@" + dto2.userDTO.name + " (作者):"
+          dto.commentSecondParentName = "@" + dto2.userDTO.name + " (作者): "
         } else {
           //如果被回复的是普通评论者
-          dto.commentSecondParentName = "@" + dto2.userDTO.name + ":";
+          dto.commentSecondParentName = "@" + dto2.userDTO.name + ": ";
         }
         //聚焦到二级评论输入框
         this.$refs['commentSecondInput' + index][0].focus();
@@ -664,7 +667,7 @@
                   let index = commentSecond.content.indexOf(":");
                   commentSecond.commentedName = commentSecond.content.substring(0, index + 1);
                   //冒号前面还有空格,所以index+2
-                  commentSecond.content = commentSecond.content.substring(index + 1, commentSecond.content.length);
+                  commentSecond.content = commentSecond.content.substring(index + 2, commentSecond.content.length);
                 }
               })
             }

@@ -327,6 +327,13 @@
 .comment-second-box {
   margin-bottom: 10px;
 }
+.cancel-comment-the-user {
+  color: rgba(245, 108, 108, 0.8);
+  cursor: pointer;
+}
+.cancel-comment-the-user:hover {
+  color: rgb(203, 1, 1);
+}
 .comment-second-list-box {
   border-bottom: 1px dashed #DCDFE6;
 }
