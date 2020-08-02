@@ -11,13 +11,13 @@ import com.banmingi.communityplus.usercenter.enums.AccountTypeEnum;
 import com.banmingi.communityplus.usercenter.enums.RegisterRespStatusEnum;
 import com.banmingi.communityplus.usercenter.mapper.BonusEventLogMapper;
 import com.banmingi.communityplus.usercenter.mapper.UserMapper;
+import com.banmingi.communityplus.usercenter.rocketmq.output.CheckCodeSource;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class UserService {
 
     private final UserMapper userMapper;
     private final BonusEventLogMapper bonusEventLogMapper;
-    private final Source source;
+    private final CheckCodeSource checkCodeSource;
     private final RedisTemplate<String, String> redisTemplate;
 
     private static final String KEY_PREFIX = "user:checkCode:";
@@ -62,7 +62,7 @@ public class UserService {
         Map<String,String> msg = new HashMap<>();
         msg.put("accountId",accountId);
         msg.put("checkCode",checkCode);
-        this.source.output().send(MessageBuilder.withPayload(msg).build());
+        this.checkCodeSource.output().send(MessageBuilder.withPayload(msg).build());
 
         //把验证码保存到redis中,5分钟有效
         this.redisTemplate.opsForValue().set(KEY_PREFIX+accountId,checkCode,5L, TimeUnit.MINUTES);

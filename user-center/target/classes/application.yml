@@ -21,11 +21,11 @@ spring:
         binder:
           name-server: 127.0.0.1:9876
       bindings:
-        output:
-          #指定topic
+        # 验证码
+        checkCode-output:
           destination: CheckCode-Topic
-        input:
-          #用来指定 topic
+         # 积分
+        addBonus-input:
           destination:
             AddBonus-Topic
           group:
@@ -47,3 +47,4 @@ jwt:
   secret: wwwbanmingixyzcommunity-plus123456789abc
   # 有效期，单位秒，默认1周
   expire-time-in-second: 604800
+

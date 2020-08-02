@@ -1,8 +1,10 @@
 package com.banmingi.communityplus.contentcenter.service;
 
+import com.banmingi.communityplus.commons.enums.NotificationTypeEnum;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleDTO;
 import com.banmingi.communityplus.contentcenter.dto.comment.CommentCreateDTO;
 import com.banmingi.communityplus.contentcenter.dto.comment.CommentDTO;
+import com.banmingi.communityplus.contentcenter.dto.notification.NotificationCreateDTO;
 import com.banmingi.communityplus.contentcenter.dto.user.UserDTO;
 import com.banmingi.communityplus.contentcenter.entity.Article;
 import com.banmingi.communityplus.contentcenter.entity.Comment;
@@ -10,12 +12,14 @@ import com.banmingi.communityplus.contentcenter.enums.CommentTypeEnum;
 import com.banmingi.communityplus.contentcenter.feignclient.UserFeignClient;
 import com.banmingi.communityplus.contentcenter.mapper.ArticleMapper;
 import com.banmingi.communityplus.contentcenter.mapper.CommentMapper;
+import com.banmingi.communityplus.contentcenter.rocketmq.output.NotificationSource;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -23,6 +27,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -39,6 +44,7 @@ public class CommentService {
     private final ArticleMapper articleMapper;
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserFeignClient userFeignClient;
+    private final NotificationSource notificationSource;
 
     private static final String ARTICLE_ID_KEY = "article:id:";
 
@@ -49,15 +55,15 @@ public class CommentService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void comment(CommentCreateDTO commentCreateDTO) {
-        //1. 构建评论实体
+        //构建评论实体
         Comment comment = new Comment();
         BeanUtils.copyProperties(commentCreateDTO, comment);
         comment.setCreateTime(System.currentTimeMillis());
 
-        //2. 评论插入数据库
+        //评论插入数据库
         this.commentMapper.insert(comment);
 
-        //3. 如果是二级评论的话,针对这条评论的评论数要 +1
+        //如果是二级评论的话,针对这条评论的评论数要 +1
         if (comment.getType().equals(CommentTypeEnum.COMMENT.getType())) {
             //更新数据库
             // 更新评论列表的回复数
@@ -72,8 +78,7 @@ public class CommentService {
                 this.commentMapper.updateById(parentComment);
             }
         }
-
-        //4. 文章评论数显示的是总的评论数,所以要 +1
+        //文章评论数显示的是总的评论数,所以要 +1
         //看缓存中是否有文章
         ArticleDTO articleDTO = getArticleFromCache(comment.getArticleId());
         if (articleDTO != null) {
@@ -84,14 +89,69 @@ public class CommentService {
             Article article = new Article();
             BeanUtils.copyProperties(articleDTO, article);
             this.articleMapper.updateById(article);
+        } else {
+            //缓存中没有文章的话,直接更新数据库
+            Article article = this.articleMapper.selectById(comment.getArticleId());
+            article.setCommentCount(article.getCommentCount() + 1);
+            this.articleMapper.updateById(article);
+        }
+
+        //TODO 发布通知(暂时不考虑分布式事务)
+        createNotifyByComment(commentCreateDTO);
+    }
+
+    /**
+     * 发布通知
+     * @param commentCreateDTO  评论创建实体
+     */
+    private void createNotifyByComment(CommentCreateDTO commentCreateDTO) {
+        Integer notifierId = commentCreateDTO.getCommentatorId();
+        Integer receiverId = null;
+        Integer outerId = null;
+        String type = null;
+        String notifierName = null;
+        UserDTO userDTO = this.userFeignClient.findById(commentCreateDTO.getCommentatorId());
+        String outerTitle = null;
+        if (userDTO != null) {
+            notifierName = userDTO.getName();
+        }
+        // 如果是一级评论
+        if (commentCreateDTO.getType().equals(CommentTypeEnum.ARTICLE.getType())) {
+            Article article = this.articleMapper.selectById(commentCreateDTO.getArticleId());
+            if (article != null) {
+                receiverId = article.getUserId();
+                outerId = article.getId();
+                type = NotificationTypeEnum.COMMENT_ARTICLE.name();
+                outerTitle = article.getTitle();
+            }
+        } else { //如果是二级评论
+            Comment comment = this.commentMapper.selectById(commentCreateDTO.getParentId());
+            if (comment != null) {
+                receiverId = comment.getCommentatorId();
+                outerId = comment.getId();
+                type = NotificationTypeEnum.REPLY_COMMENT.name();
+                outerTitle = comment.getContent();
+            }
+        }
+
+        if (Objects.equals(notifierId,receiverId)) {
             return;
         }
-        //缓存中没有文章的话,直接更新数据库
-        Article article = this.articleMapper.selectById(comment.getArticleId());
-        article.setCommentCount(article.getCommentCount() + 1);
-        this.articleMapper.updateById(article);
 
+        NotificationCreateDTO notificationCreateDTO = NotificationCreateDTO.builder()
+                .notifierId(notifierId)
+                .receiverId(receiverId)
+                .outerId(outerId)
+                .type(type)
+                .notifierName(notifierName)
+                .outerTitle(outerTitle)
+                .content(commentCreateDTO.getContent())
+                .createTime(System.currentTimeMillis())
+                .build();
+        //发送消息
+        this.notificationSource.notificationOutput().send(MessageBuilder.withPayload(notificationCreateDTO).build());
     }
+
 
     /**
      * 根据文章id查找其文章下的所有评论

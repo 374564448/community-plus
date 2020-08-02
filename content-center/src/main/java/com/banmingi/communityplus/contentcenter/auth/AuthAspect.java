@@ -1,6 +1,6 @@
 package com.banmingi.communityplus.contentcenter.auth;
 
-import com.banmingi.communityplus.commons.enums.CheckAuthorization;
+import com.banmingi.communityplus.commons.annotations.CheckAuthorization;
 import com.banmingi.communityplus.commons.exception.SecurityException;
 import com.banmingi.communityplus.commons.utils.JwtOperator;
 import io.jsonwebtoken.Claims;
@@ -35,7 +35,7 @@ public class AuthAspect {
      * @param point
      * @return
      */
-    @Around("@annotation(com.banmingi.communityplus.commons.enums.CheckLogin)")
+    @Around("@annotation(com.banmingi.communityplus.commons.annotations.CheckLogin)")
     public Object checkLogin(ProceedingJoinPoint point) throws Throwable {
         this.checkToken();
         return point.proceed();
@@ -47,7 +47,7 @@ public class AuthAspect {
      * @return
      * @throws Throwable
      */
-    @Around("@annotation(com.banmingi.communityplus.commons.enums.CheckAuthorization)")
+    @Around("@annotation(com.banmingi.communityplus.commons.annotations.CheckAuthorization)")
     public Object checkAuthorization(ProceedingJoinPoint point) throws Throwable {
         try {
             //1. 验证token是否合法

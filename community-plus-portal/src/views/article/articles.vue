@@ -272,7 +272,7 @@
                                 >
                                   <!--取消评论此用户-->
                                   <span v-if="commentDTO.commentSecondParentName" slot="prefix">
-                                    <el-tooltip content="取消评论此用户" placement="top" effect="light">
+                                    <el-tooltip content="取消回复此用户" placement="top" effect="light">
                                       <i class="el-input__icon el-icon-circle-close cancel-comment-the-user"
                                          @click="closeCommentTag(commentDTO)"></i>
                                     </el-tooltip>
@@ -532,15 +532,16 @@
        *根据id定位到某条具体的评论
        */
       turnCommentBoxByURL() {
-        let url = window.location.hash
+        let url = window.location.hash;
         if (url && url.length !== 0) {
           let commentId = url.substring(1, url.length);
           setTimeout(function () {
-            let comment = document.getElementById(commentId);
+            let comment = document.getElementById(commentId)
             if (comment) {
               comment.scrollIntoView(false);
             }
           }, 1000);
+
         }
       },
       /**

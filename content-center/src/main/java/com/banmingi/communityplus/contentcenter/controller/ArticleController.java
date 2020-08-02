@@ -1,6 +1,6 @@
 package com.banmingi.communityplus.contentcenter.controller;
 
-import com.banmingi.communityplus.commons.enums.CheckLogin;
+import com.banmingi.communityplus.commons.annotations.CheckLogin;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleDTO;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleListDTO;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticlePublishDTO;

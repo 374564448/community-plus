@@ -1,0 +1,6 @@
+com\banmingi\communityplus\cloudcenter\dto\FileInfoDTO$FileInfoDTOBuilder.class
+com\banmingi\communityplus\cloudcenter\provider\OSSProvider.class
+com\banmingi\communityplus\cloudcenter\controller\UploadController.class
+com\banmingi\communityplus\cloudcenter\dto\FileInfoDTO.class
+com\banmingi\communityplus\cloudcenter\service\UploadService.class
+com\banmingi\communityplus\cloudcenter\CloudCenterApplication.class

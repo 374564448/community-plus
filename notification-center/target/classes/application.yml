@@ -12,19 +12,22 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848
-    # rocketMq
     stream:
       rocketmq:
         binder:
           name-server: 127.0.0.1:9876
       bindings:
-        input:
-          #指定topic
+        # 验证码
+        checkCode-input:
           destination: CheckCode-Topic
           group: CheckCode-Group
+        # 通知
+        notification-input:
+          destination: Notification-Topic
+          group: Notification-Group
 
   application:
-    name: sms-center
+    name: notification-center
   main:
     allow-bean-definition-overriding: true
   #邮箱发送设置

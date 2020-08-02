@@ -17,6 +17,7 @@ import com.banmingi.communityplus.contentcenter.feignclient.UserFeignClient;
 import com.banmingi.communityplus.contentcenter.mapper.ArticleMapper;
 import com.banmingi.communityplus.contentcenter.mapper.CategoryMapper;
 import com.banmingi.communityplus.contentcenter.mapper.RocketMQTransactionLogMapper;
+import com.banmingi.communityplus.contentcenter.rocketmq.output.AddBonusSource;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -26,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -52,7 +52,7 @@ public class ArticleService {
     private final CategoryMapper categoryMapper;
     private final RedisTemplate<String,Object> redisTemplate;
     private final UserFeignClient userFeignClient;
-    private final Source source;
+    private final AddBonusSource addBonusSource;
 
     private static final String ARTICLE_SAVE_KEY = "article:save:";
     private static final String ARTICLE_ID_KEY = "article:id:";
@@ -117,7 +117,7 @@ public class ArticleService {
             throw new IllegalArgumentException("参数非法！该文章不存在");
         }
         if (!article.getAuditStatus().equals(ArticleStatusEnum.NOT_YET.getStatus())) {
-            throw new IllegalArgumentException("参数非法!该分享已审核通过或未通过!");
+            throw new IllegalArgumentException("参数非法!该文章已审核通过或未通过!");
         }
 
         //2. 如果是PASS,那么发送消息给rockerMQ,让用户中心去消费,为发布人添加积分
@@ -139,7 +139,7 @@ public class ArticleService {
                     .setHeader("articleAuditDTO", JSON.toJSONString(articleAuditDTO))
                     .build();
             //推送消息给rocketMq,为用户添加积分
-            this.source.output().send(message);
+            this.addBonusSource.addBonusOutput().send(message);
 
             //把文章添加
         } else {

@@ -45,7 +45,7 @@ public class Notification implements Serializable {
     /**
      * 通知的类型（回复了你的评论、评论了你的文章、点赞了你等等）
      */
-    private Integer type;
+    private String type;
 
     /**
      * 状态（已读1 / 未读0）

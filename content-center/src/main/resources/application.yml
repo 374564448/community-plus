@@ -21,17 +21,21 @@ spring:
         binder:
           name-server: 127.0.0.1:9876
         bindings:
-          output:
+          addBonus-output:
             producer:
               # 开启支持本地事务
               transactional: true
               # @AddBonusTransactionListener(txProducerGroup = "AddBonusTransaction-Group") 相一致
               group: AddBonusTransaction-Group
       bindings:
-        output:
-          #用来指定 topic
+        # 积分
+        addBonus-output:
           destination:
             AddBonus-Topic
+        # 通知
+        notification-output:
+          destination:
+            Notification-Topic
 
   application:
     name: content-center
