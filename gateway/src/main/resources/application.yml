@@ -8,7 +8,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
+        server-addr: 192.168.72.130:8848
         # 路由网关配置
     gateway:
       # 设置与服务注册发现组件结合，这样可以采用服务名的路由策略
