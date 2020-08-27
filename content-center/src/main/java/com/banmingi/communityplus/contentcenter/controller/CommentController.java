@@ -1,6 +1,6 @@
 package com.banmingi.communityplus.contentcenter.controller;
 
-import com.banmingi.communityplus.commons.annotations.CheckLogin;
+import com.banmingi.communityplus.auth.annotations.CheckLogin;
 import com.banmingi.communityplus.contentcenter.dto.comment.CommentCreateDTO;
 import com.banmingi.communityplus.contentcenter.dto.comment.CommentDTO;
 import com.banmingi.communityplus.contentcenter.service.CommentService;

@@ -7,15 +7,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="gateway" />
-        <module name="common" />
-        <module name="notification-center" />
-        <module name="content-center" />
         <module name="cloud-center" />
         <module name="user-center" />
+        <module name="common" />
+        <module name="auth" />
+        <module name="content-center" />
+        <module name="notification-center" />
+        <module name="gateway" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="auth" target="1.8" />
       <module name="cloud-center" target="1.8" />
       <module name="common" target="1.8" />
       <module name="common-dto" target="1.8" />
@@ -32,6 +34,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="auth" options="-parameters" />
       <module name="cloud-center" options="-parameters" />
       <module name="common" options="-parameters" />
       <module name="common-dto" options="-parameters" />

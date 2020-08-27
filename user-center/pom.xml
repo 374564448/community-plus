@@ -86,6 +86,12 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.banmingi.community-plus</groupId>
+            <artifactId>auth</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
     </dependencies>
 
 

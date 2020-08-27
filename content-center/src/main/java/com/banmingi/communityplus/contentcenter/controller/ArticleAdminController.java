@@ -1,6 +1,6 @@
 package com.banmingi.communityplus.contentcenter.controller;
 
-import com.banmingi.communityplus.commons.annotations.CheckAuthorization;
+import com.banmingi.communityplus.auth.annotations.CheckAuthorization;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleAuditDTO;
 import com.banmingi.communityplus.contentcenter.service.ArticleService;
 import lombok.RequiredArgsConstructor;

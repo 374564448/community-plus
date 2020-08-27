@@ -1,6 +1,6 @@
 package com.banmingi.communityplus.usercenter.controller;
 
-import com.banmingi.communityplus.commons.utils.JwtOperator;
+import com.banmingi.communityplus.auth.JwtOperator;
 import com.banmingi.communityplus.usercenter.dto.user.GeneralLoginDTO;
 import com.banmingi.communityplus.usercenter.dto.user.GitHubLoginDTO;
 import com.banmingi.communityplus.usercenter.dto.user.JwtTokenRespDTO;

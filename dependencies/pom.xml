@@ -64,8 +64,7 @@
                 <artifactId>pagehelper-spring-boot-starter</artifactId>
                 <version>${pahehelper.version}</version>
             </dependency>
-
-
+            
         </dependencies>
     </dependencyManagement>
 </project>

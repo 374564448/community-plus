@@ -1,6 +1,6 @@
 package com.banmingi.communityplus.cloudcenter.controller;
 
-import com.banmingi.communityplus.cloudcenter.dto.FileInfoDTO;
+import com.banmingi.communityplus.cloudcenter.dto.oss.FileInfoDTO;
 import com.banmingi.communityplus.cloudcenter.service.UploadService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

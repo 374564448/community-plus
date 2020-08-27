@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/auth/auth.iml" filepath="$PROJECT_DIR$/auth/auth.iml" />
       <module fileurl="file://$PROJECT_DIR$/cloud-center/cloud-center.iml" filepath="$PROJECT_DIR$/cloud-center/cloud-center.iml" />
       <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/community-plus.iml" filepath="$PROJECT_DIR$/.idea/community-plus.iml" />

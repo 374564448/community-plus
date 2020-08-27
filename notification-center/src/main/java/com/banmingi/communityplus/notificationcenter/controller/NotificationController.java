@@ -10,4 +10,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("notifications")
 public class NotificationController {
+
 }
