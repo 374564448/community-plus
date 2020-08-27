@@ -47,6 +47,7 @@ public class CommentService {
     private final NotificationSource notificationSource;
 
     private static final String ARTICLE_ID_KEY = "article:id:";
+    private static final String ARTICLE_ID_COMMENT_KEY = "article:id:comment:";
 
     /**
      * 评论
@@ -159,6 +160,14 @@ public class CommentService {
      * @return 评论详情集合
      */
     public List<CommentDTO> getCommentList(Integer articleId) {
+        //先从缓存中查找文章下的评论集合
+        String commentListCacheKey = ARTICLE_ID_COMMENT_KEY + articleId;
+        List<Object> list = this.redisTemplate.opsForList().range(commentListCacheKey,0,-1);
+        if (!CollectionUtils.isEmpty(list)) {
+            log.info("get commentList from cache: {}",list);
+            return list.stream().map(l -> (CommentDTO)l).collect(Collectors.toList());
+        }
+
         //1. 根据条件查询评论列表
         QueryWrapper<Comment> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("article_id", articleId);
@@ -206,6 +215,18 @@ public class CommentService {
             commentFirst.setCommentSecondDTOList(collect);
         }).collect(Collectors.toList());
 
+        //6. 若缓存中有该评论列表对应的文章且缓存没有评论,也应该把评论列表放入缓存
+        Boolean hasArticle = this.redisTemplate.hasKey(ARTICLE_ID_KEY + articleId);
+        Boolean hasCommentList = this.redisTemplate.hasKey(commentListCacheKey);
+        Long expireTime = this.redisTemplate.opsForList().getOperations().getExpire(ARTICLE_ID_KEY + articleId, TimeUnit.DAYS);
+        if (Objects.equals(hasArticle,true) && Objects.equals(hasCommentList,false)) {
+            commentFirstDTOList.forEach(comment -> {
+                this.redisTemplate.opsForList().rightPush(commentListCacheKey,comment);
+                //设置过期时间和文章的一样
+                this.redisTemplate.expire(commentListCacheKey,expireTime,TimeUnit.DAYS);
+            });
+        }
+        log.info("get commentList from db: {}",commentFirstDTOList);
         return commentFirstDTOList;
     }
     /**

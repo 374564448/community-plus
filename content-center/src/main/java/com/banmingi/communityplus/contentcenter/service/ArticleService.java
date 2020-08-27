@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -98,7 +99,7 @@ public class ArticleService {
      */
    public ArticlePublishDTO getTheSavedArticle(Integer userId) {
        Boolean hasArticle = this.redisTemplate.hasKey(ARTICLE_SAVE_KEY + userId);
-       if (!hasArticle) {
+       if (Objects.equals(hasArticle,false)) {
            return null;
        }
        return (ArticlePublishDTO) this.redisTemplate.opsForValue().get(ARTICLE_SAVE_KEY + userId);
@@ -301,7 +302,7 @@ public class ArticleService {
             articleDTOCache.setUserDTO(userDTO);
             articleDTOCache.setCategory(category);
             //如果文章浏览数超过10000的话,就将文章详情放入缓存
-            if (articleDTOCache.getViewCount()>=10000) {
+            if (articleDTOCache.getViewCount()>=1000) {
                 this.redisTemplate.opsForValue().set(ARTICLE_ID_KEY+id,articleDTOCache,7L,TimeUnit.DAYS);
             }
         }
