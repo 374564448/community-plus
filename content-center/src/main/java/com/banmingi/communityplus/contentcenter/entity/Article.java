@@ -78,9 +78,9 @@ public class Article implements Serializable {
     private Integer isOriginal;
 
     /**
-     * 审核状态：1: 待审核  2:审核通过 3:审核不通过
+     * 审核状态：NOT_YET: 待审核  PASS:审核通过 REJECT:审核不通过
      */
-    private Integer auditStatus;
+    private String auditStatus;
 
     /**
      * 审核不通过原因

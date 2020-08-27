@@ -70,7 +70,7 @@ public class ArticleService {
         Article article = new Article();
         BeanUtils.copyProperties(articlePublishDTO,article);
         if (article.getId() == null){
-            article.setAuditStatus(ArticleStatusEnum.NOT_YET.getStatus());
+            article.setAuditStatus(ArticleStatusEnum.NOT_YET.name());
             article.setCreateTime(System.currentTimeMillis());
             article.setModifyTime(System.currentTimeMillis());
             this.articleMapper.insert(article);
@@ -117,12 +117,12 @@ public class ArticleService {
         if (article == null) {
             throw new IllegalArgumentException("参数非法！该文章不存在");
         }
-        if (!article.getAuditStatus().equals(ArticleStatusEnum.NOT_YET.getStatus())) {
+        if (!article.getAuditStatus().equals(ArticleStatusEnum.NOT_YET.name())) {
             throw new IllegalArgumentException("参数非法!该文章已审核通过或未通过!");
         }
 
         //2. 如果是PASS,那么发送消息给rockerMQ,让用户中心去消费,为发布人添加积分
-        if (articleAuditDTO.getArticleStatus().equals(ArticleStatusEnum.PASS.getStatus())) {
+        if (articleAuditDTO.getArticleStatus().equals(ArticleStatusEnum.PASS.name())) {
             //生成事务id
             String transactionId = UUID.randomUUID().toString();
             //构建消息体
@@ -195,7 +195,7 @@ public class ArticleService {
         QueryWrapper<Article> wrapper = new QueryWrapper<>();
 
         //文章审核通过且公开
-        wrapper.eq("audit_status",2);
+        wrapper.eq("audit_status",ArticleStatusEnum.PASS.name());
         wrapper.eq("show_flag",1);
         //搜寻条件不为空
         if (StringUtils.isNotBlank(search)) {

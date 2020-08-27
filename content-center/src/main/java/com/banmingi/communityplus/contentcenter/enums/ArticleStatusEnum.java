@@ -10,10 +10,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ArticleStatusEnum {
-    NOT_YET(1),
-    PASS(2),
-    REJECT(3);
-
-    private final Integer status;
-
+    NOT_YET,
+    PASS,
+    REJECT;
 }
