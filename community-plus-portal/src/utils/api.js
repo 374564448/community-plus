@@ -46,3 +46,8 @@ export const DELETE_COMMENT_URL = COMMENT_API_URL + "/delete/"
 export const UPLOAD_API_URL = BASE_API_URL + '/upload';
 //上传图片luj
 export const UPLOAD_IMAGE_URL = UPLOAD_API_URL + '/image';
+
+//通知中心
+export const NOTIFICATIONS_API_URL = BASE_API_URL + "/notifications"
+export const NOTIFICATIONS_UN_READ_COUNT_URL = NOTIFICATIONS_API_URL + "/unReadCount/"
+export const NOTIFICATIONS_LIST_URL = NOTIFICATIONS_API_URL + "/list/"

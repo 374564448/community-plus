@@ -5,19 +5,25 @@
       <i class="iconfont" style="font-size: 20px;">&#xe7e2;&nbsp;</i>我的通知
     </div>
     <!-- 通知列表-->
-    <div class="notification-list-box" :key="index" v-for="(notification,index) in notificationDTO">
+    <!-- 没有数据时显示-->
+    <div v-if="!notificationPageInfo || !notificationPageInfo.total || notificationPageInfo.total===0" style="text-align: center;padding:40px 0;user-select: none">
+      <i class="iconfont" style="font-size: 120px;color: rgba(0,181,173,0.7);">&#xe612;</i>
+    </div>
+    <div v-if="notificationPageInfo && notificationPageInfo.total!==0" class="notification-list-box" :key="index" v-for="(notification,index) in notificationPageInfo.list">
       <div class="notification-content">
         <!--通知人-->
         <span><router-link style="color: #3399ea;text-decoration: underline" to="#">
           {{notification.notifierName}}</router-link>
         </span>
-        <!--type-->
-        <span>{{notification.typeDescription}}</span>
+        <!--typeDesc-->
+        <span>{{notification.typeDesc}}</span>
         <!--外部标题-->
-        <span><router-link class="outerTitle-style" to="#">{{notification.outerTitle}}</router-link></span>
+        <span v-if="notification.outerTitle">
+          <router-link class="outerTitle-style" to="#">{{notification.outerTitle}}</router-link>
+        </span>
       </div>
       <!--内容-->
-      <div v-show="notification.content" class="content-style">
+      <div v-if="notification.content" class="content-style">
         {{notification.content}}
       </div>
       <!--通知时间-->
@@ -31,46 +37,40 @@
       </div>
     </div>
 
+    <!-- 分页 -->
+    <div class="pagination-box">
+      <el-pagination
+        background
+        layout="prev, pager, next,jumper"
+        :current-page.sync="notificationPageInfo.pageNum"
+        :page-size="notificationPageInfo.pageSize"
+        :total="notificationPageInfo.total"
+        @current-change="pageNumNotificationsList(notificationPageInfo.pageNum)"
+        @prev-click="pageNumNotificationsList(notificationPageInfo.pageNum - 1)"
+        @next-click="pageNumNotificationsList(notificationPageInfo.pageNum + 1)"
+      >
+      </el-pagination>
+    </div>
+
   </div>
 </template>
 
 <script>
   import request from "@/utils/request";
+  import {NOTIFICATIONS_LIST_URL} from "@/utils/api";
   import {getDateDiff} from "@/utils/common";
 
 
   export default {
     name: "notification",
+    mounted() {
+      this.pageNumNotificationsList(1);
+    },
     data() {
       return {
-        notificationDTO: [
-          {
-            id: '1',
-            notifierId: '13',
-            receiverId: '2',
-            outerId: '4',
-            type: '14',
-            typeDescription: '回复了你的评论',
-            status: false,
-            notifierName: '半命i',
-            outerTitle: '我以管理员身份运行VM启动虚拟器出现黑屏，然后重启电脑，再打开VM重新启动虚拟机，报错，说服务已终止运行。 但有时候重启几次电脑就可以正常运行虚拟机，，，，气死了',
-            content: '感谢楼主，解决了！！',
-            createTime: 1591980542092
-          },
-          {
-            id: '2',
-            notifierId: '16',
-            receiverId: '2',
-            contentId: '5',
-            type: '5',
-            typeDescription: '关注了你',
-            status: true,
-            notifierName: 'banmingi',
-            outerTitle: '',
-            content: '',
-            createTime: 1591980542092
-          }
-        ]
+        userId: this.$store.getters.getUser.id,
+
+        notificationPageInfo: []
       }
     },
     methods: {
@@ -80,6 +80,28 @@
       getTheDateDiff(time) {
         return getDateDiff(time);
       },
+
+      /**
+       * 分页请求通知列表
+       * @param pageNum
+       */
+      pageNumNotificationsList(pageNum) {
+        if (this.userId) {
+          request.get(NOTIFICATIONS_LIST_URL + this.userId,
+            {params: {
+              pageNum: pageNum
+              }
+            }).then(({data}) => {
+              this.notificationPageInfo = data;
+          }).catch(err => {
+            console.log(err);
+            this.$notify.error({
+              message: '获取通知列表失败'
+            });
+          })
+
+        }
+      }
     }
   }
 </script>
@@ -143,5 +165,11 @@
     color: #fff6e5;
     background-color: #d72730;
     font-size: 12px;
+  }
+  .pagination-box {
+    margin-top: 20px;
+    border-radius: 5px;
+    background-color: #fff;
+    padding: 5px 0;
   }
 </style>

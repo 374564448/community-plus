@@ -34,3 +34,8 @@ spring:
           predicates:
             # 路径匹配
             - Path=/upload/**
+        # 通知中心
+        - id: NOTIFICATION-CENTER
+          uri: lb://notification-center
+          predicates:
+            - Path=/notifications/**

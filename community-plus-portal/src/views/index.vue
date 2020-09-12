@@ -31,11 +31,11 @@
             </div>
           </div>
           <!-- 没有数据时显示-->
-          <div v-show="articleListPageInfo.total===0 || !articleListPageInfo" style="text-align: center;padding:40px 0;user-select: none">
+          <div v-show="!articleListPageInfo || !articleListPageInfo.total || articleListPageInfo.total===0" style="text-align: center;padding:40px 0;user-select: none">
             <i class="iconfont" style="font-size: 120px;color: rgba(0,181,173,0.7);">&#xe612;</i>
           </div>
           <!-- 文章list-->
-          <div v-show="articleListPageInfo.total!==0">
+          <div v-show="articleListPageInfo && articleListPageInfo.total!==0">
             <div class="article-list" :key="index" v-for="(i,index) in articleListPageInfo.list">
               <!-- 作者头像 -->
               <div style="cursor: pointer">
@@ -202,6 +202,9 @@
           this.articleListPageInfo = data;
         }).catch(err => {
           console.log(err);
+          this.$notify.error({
+            message: '获取文章列表失败'
+          });
         })
       },
       /**

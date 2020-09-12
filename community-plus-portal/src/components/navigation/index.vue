@@ -31,7 +31,9 @@
         <div class="notice">
           <router-link to="/notifications">
             <i class="iconfont" style="font-size: 28px;">&#xe7e2;</i>
-            <div class="count">99+</div>
+            <div class="count" v-show="this.unReadNotificationCount !== 0">
+              {{unReadNotificationCount<100?unReadNotificationCount:99+"+"}}
+            </div>
           </router-link>
 
         </div>
@@ -132,7 +134,7 @@
 
 <script>
   import request from "@/utils/request";
-  import { GET_USER_INFO_URL,GENERAL_LOGIN_URL } from '@/utils/api';
+  import { GET_USER_INFO_URL,GENERAL_LOGIN_URL,NOTIFICATIONS_UN_READ_COUNT_URL} from '@/utils/api';
   import {setToken,getToken, removeToken} from "@/utils/auth";
 
   export default {
@@ -146,6 +148,11 @@
               accountId: '',
               password: ''
             },
+
+            userId: this.$store.getters.getUser.id,
+
+            //未读通知数
+            unReadNotificationCount: 0,
 
             //搜索条件
             search: '',
@@ -175,11 +182,18 @@
        }
      },
 
-      //首次进入页面通过token加载用户信息,token从localStorage获取
-      created() {
-          this.getUserInfo();
-      },
-      methods: {
+    //首次进入页面通过token加载用户信息,token从localStorage获取
+    created() {
+        this.getUserInfo();
+    },
+    mounted() {
+      let userId = this.$store.getters.getUser.id;
+      console.log(userId)
+      if (userId) {
+        this.getNotificationsUnReadCount(userId);
+      }
+    },
+    methods: {
 
         searchArticle() {
           window.location.href = "/?search=" + this.search;
@@ -301,6 +315,19 @@
             }
           }).catch(() => {
           });
+        },
+
+        /**
+         * 获取未读通知数
+         * @param userId
+         */
+        getNotificationsUnReadCount(userId) {
+          request.get(NOTIFICATIONS_UN_READ_COUNT_URL + userId)
+            .then(({data}) => {
+              this.unReadNotificationCount = data;
+          }).catch(err => {
+            console.error(err)
+          })
         }
 
       }

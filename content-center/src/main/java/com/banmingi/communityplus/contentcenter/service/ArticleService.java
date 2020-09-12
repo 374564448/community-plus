@@ -287,7 +287,7 @@ public class ArticleService {
         //构建文章详情实体
         ArticleDTO articleDTOCache = new ArticleDTO();
         //文章不为null && 文章审核通过 && 文章公开
-        if (article!=null && article.getAuditStatus().equals(2) && article.getShowFlag().equals(1)) {
+        if (article!=null && Objects.equals(article.getAuditStatus(),ArticleStatusEnum.PASS.name()) && article.getShowFlag().equals(1)) {
 
             //更新数据库阅读数 +1
             article.setViewCount(article.getViewCount() + 1);

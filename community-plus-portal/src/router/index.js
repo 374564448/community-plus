@@ -7,9 +7,10 @@ import login_github from "@/views/user/login_github";
 import register from "@/views/user/register";
 import publish from "@/views/article/publish";
 import articles from "@/views/article/articles";
-import error from "@/views/error";
 import notifications from "@/views/notification/notifications";
 import notification from "@/views/notification/notification";
+import error from "@/views/error";
+
 
 // 安装路由
 Vue.use(Router);

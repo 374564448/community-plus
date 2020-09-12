@@ -44,3 +44,10 @@ spring:
           starttls:
             enable: true
             required: true
+
+
+#JWT密钥
+jwt:
+  secret: wwwbanmingixyzcommunity-plus123456789abc
+  # 有效期，单位秒，默认1周
+  expire-time-in-second: 604800
