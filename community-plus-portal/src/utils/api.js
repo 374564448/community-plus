@@ -26,6 +26,8 @@ export const ARTICLE_API_URL = BASE_API_URL + '/articles';
 export const ARTICLE_SAVED_API_URL =  ARTICLE_API_URL+ '/save';
 //获取保存文章路径
 export const GET_SAVED_ARTICLE_URL = ARTICLE_API_URL + '/save/';
+//获取需要编辑的文章路径
+export const GET_EDIT_ARTICLE_URL = ARTICLE_API_URL + "/edit/"
 //文章发布路径
 export const ARTICLE_PUBLISH_URL = ARTICLE_API_URL + '/publish';
 //分页 & 条件 获取文章列表路径

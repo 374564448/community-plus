@@ -183,12 +183,7 @@
 
     //首次进入页面通过token加载用户信息,token从localStorage获取
     created() {
-      this.getUserInfo();
-    },
-    mounted() {
-      this.$nextTick(() => {
-        this.getNotificationsUnReadCount();
-      })
+        this.getUserInfo();
     },
     methods: {
 
@@ -278,6 +273,8 @@
           if (getToken() &&getToken().expirationTime - new Date().getTime() > 0) {
             request.get(GET_USER_INFO_URL)
               .then(({data}) => {
+                //获取用户未读通知数
+                this.getNotificationsUnReadCount(data.id)
                 //userInfo存入vuex
                 this.$store.dispatch('asyncUpdateUser',data);
             }).catch(error => {
@@ -317,12 +314,7 @@
         /**
          * 获取未读通知数
          */
-        getNotificationsUnReadCount() {
-          let userId = this.$store.getters.getUser.id;
-          if (!userId) {
-            return;
-          }
-          console.log(userId);
+        getNotificationsUnReadCount(userId) {
           request.get(NOTIFICATIONS_UN_READ_COUNT_URL + userId)
             .then(({data}) => {
               this.unReadNotificationCount = data;

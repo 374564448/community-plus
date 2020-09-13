@@ -42,7 +42,7 @@
         <!-- 警告 -->
         <div class="publish-warning">
           <i class="iconfont" style="font-size: 11px;">&#xe62f;</i>
-          请勿发布涉及政治、广告、营销、翻墙、违反国家法律法规等内容
+          请勿发布涉及政治、广告、营销、违反国家法律法规等内容
         </div>
         <div style="font-size: 12px">
           <!-- 分类 -->

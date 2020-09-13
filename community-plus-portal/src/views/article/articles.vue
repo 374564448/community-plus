@@ -177,7 +177,7 @@
                   <span>更新于&nbsp;{{getTheDateDiff(articleDTO.modifyTime)}}</span>
                 </div>
                 <!--编辑按钮-->
-                <div class="edit" v-show="userId===articleDTO.userDTO.id">
+                <div class="edit" v-show="userId===articleDTO.userDTO.id" @click="editArticle(articleDTO.id)">
                   <i class="iconfont" style="font-size: 13px;">&#xe66d;</i>编辑
                 </div>
               </div>
@@ -586,6 +586,13 @@
           console.log(err);
           this.$message.error('服务器异常，请稍后再试！');
         })
+      },
+
+      /**
+       * 编辑文章
+       */
+      editArticle(articleId) {
+        this.$router.push({ name: 'edit', params: {id: articleId}})
       },
 
 

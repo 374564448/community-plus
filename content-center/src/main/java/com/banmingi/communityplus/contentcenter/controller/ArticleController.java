@@ -43,6 +43,19 @@ public class ArticleController {
         return ResponseEntity.ok(articleDTO);
     }
 
+    /**
+     * 获取需要编辑的文章
+     * @param id id
+     * @return ArticlePublishDTO
+     */
+    @GetMapping("/edit/{id}")
+    @CheckLogin
+    public ResponseEntity<ArticlePublishDTO> getEditArticle(
+            @PathVariable Integer id) {
+        ArticlePublishDTO articlePublishDTO = this.articleService.getEditArticle(id);
+        return ResponseEntity.ok(articlePublishDTO);
+    }
+
 
     /**
      *

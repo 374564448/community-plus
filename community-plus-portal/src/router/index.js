@@ -6,6 +6,7 @@ import index from '@/views/index'
 import login_github from "@/views/user/login_github";
 import register from "@/views/user/register";
 import publish from "@/views/article/publish";
+import edit from "@/views/article/edit";
 import articles from "@/views/article/articles";
 import notifications from "@/views/notification/notifications";
 import notification from "@/views/notification/notification";
@@ -38,6 +39,11 @@ export default new Router({
       path: '/articles/publish',
       name: 'publish',
       component: publish
+    },
+    {
+      path: '/articles/edit/:id(\\d+)',
+      name: 'edit',
+      component: edit
     },
     {
       path: '/articles/:id(\\d+)',

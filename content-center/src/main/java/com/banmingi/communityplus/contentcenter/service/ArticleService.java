@@ -86,7 +86,7 @@ public class ArticleService {
 
     /**
      * 保存文章(暂时保存7天)
-     * @param articlePublishDTO
+     * @param articlePublishDTO ArticlePublishDTO
      */
     public void save(ArticlePublishDTO articlePublishDTO) {
         Integer userId = articlePublishDTO.getUserId();
@@ -95,7 +95,7 @@ public class ArticleService {
 
     /**
      * 获取保存的文章
-     * @return
+     * @return ArticlePublishDTO
      */
    public ArticlePublishDTO getTheSavedArticle(Integer userId) {
        Boolean hasArticle = this.redisTemplate.hasKey(ARTICLE_SAVE_KEY + userId);
@@ -104,6 +104,21 @@ public class ArticleService {
        }
        return (ArticlePublishDTO) this.redisTemplate.opsForValue().get(ARTICLE_SAVE_KEY + userId);
    }
+
+    /**
+     * 获取需要编辑的文章
+     * @param id id
+     * @return ArticlePublishDTO
+     */
+    public ArticlePublishDTO getEditArticle(Integer id) {
+        ArticlePublishDTO articlePublishDTO = new ArticlePublishDTO();
+        Article article = this.articleMapper.selectById(id);
+        if (article != null) {
+            BeanUtils.copyProperties(article,articlePublishDTO);
+            return articlePublishDTO;
+        }
+        return null;
+    }
 
 
     /**
@@ -317,5 +332,6 @@ public class ArticleService {
         this.redisTemplate.delete(ARTICLE_ID_KEY + id);
         this.articleMapper.deleteById(id);
     }
+
 
 }

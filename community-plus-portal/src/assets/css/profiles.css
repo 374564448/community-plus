@@ -1,0 +1,33 @@
+.profiles-box {
+  margin: 40px 160px 100px 160px;
+  color: #888888;
+}
+
+.profiles-category-list-box {
+  background-color: #fff;
+  border: 1px solid #DCDFE6;
+  border-radius: 5px;
+}
+.profiles-category-list {
+  height: 36px;
+  padding: 4px 20px;
+  line-height: 36px;
+  font-size: 16px;
+
+  color: #606266;
+  border-bottom: 1px solid #DCDFE6;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.profiles-category-list:hover {
+  background-color: #F2F6FC;
+}
+.profiles-category-list-box .active {
+  background-color: rgba(0,0,0,0.07);
+}
+
+.profiles-list-box {
+  background-color: #fff;
+  border: 1px solid #DCDFE6;
+  border-radius: 5px;
+}

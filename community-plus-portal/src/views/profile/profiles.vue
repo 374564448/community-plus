@@ -1,10 +1,10 @@
 <template>
-  <div class="notifications-box">
+  <div class="profiles-box">
     <el-row :gutter="30">
       <el-col :span="6">
         <!-- 类别 -->
-        <div class="notifications-category-list-box">
-          <div :class="['notifications-category-list',{'active': notificationCategoryActive===index}]"
+        <div class="profiles-category-list-box">
+          <div :class="['profiles-category-list',{'active': notificationCategoryActive===index}]"
                :key="index" v-for="(category,index) in notificationCategory"
                @click="showCategoryPage(index)">
             <i class="iconfont" style="font-size: 16px;" v-html="category.iconfont"></i>&nbsp;&nbsp;{{category.name}}
@@ -13,7 +13,7 @@
       </el-col>
       <el-col :span="18">
         <!--通知列表-->
-        <div class="notifications-list-box">
+        <div class="profiles-list-box">
           <router-view/>
         </div>
       </el-col>
@@ -23,7 +23,7 @@
 
 <script>
   export default {
-    name: "notifications",
+    name: "profiles",
     //进入此页面之前先判断是否登录
     beforeRouteEnter: (to,from,next) => {
       next(vm => {
@@ -37,9 +37,9 @@
          */
         //通知类别
         notificationCategory: [
-          {iconfont: '&#xe6aa;',name: '通知'},
-          {iconfont: '&#xe60b;',name: '私信'},
-          {iconfont: '&#xe60e;',name: '系统'}
+          {iconfont: '&#xe611;',name: '个人资料'},
+          {iconfont: '&#xe648;',name: '我的文章'},
+          {iconfont: '&#xe60f;',name: '我的收藏'}
         ],
         //被选中的通知类别
         notificationCategoryActive: 0
@@ -51,6 +51,7 @@
        */
       if (this.$route.params.categoryIndex) {
         this.notificationCategoryActive = this.$route.params.categoryIndex;
+
       }
 
     },
@@ -75,8 +76,8 @@
        */
       showCategoryPage(index) {
         this.notificationCategoryActive = index;
-        if (index === 0) {
-          location.href = "/notifications"
+        if (index === 1) {
+          location.href = "/profiles/articles"
         }
       }
     }
@@ -84,5 +85,5 @@
 </script>
 
 <style scoped>
-  @import '../../assets/css/notifications.css';
+  @import '../../assets/css/profiles.css';
 </style>
