@@ -52,6 +52,7 @@ public class NotificationService {
     public PageInfo<NotificationDTO> list(Integer userId,Integer pageNum,Integer pageSize) {
         QueryWrapper<Notification> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("receiver_id",userId);
+        queryWrapper.orderByAsc("status");
         queryWrapper.orderByDesc("create_time");
 
         //分页
@@ -94,4 +95,15 @@ public class NotificationService {
     }
 
 
+    /**
+     * 标记通知已读
+     * @param id id
+     */
+    public void read(Integer id) {
+        Notification notification = this.notificationMapper.selectById(id);
+        if (notification != null && !notification.getStatus()) {
+            notification.setStatus(true);
+            this.notificationMapper.updateById(notification);
+        }
+    }
 }

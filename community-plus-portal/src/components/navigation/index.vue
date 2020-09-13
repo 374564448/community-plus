@@ -31,8 +31,8 @@
         <div class="notice">
           <router-link to="/notifications">
             <i class="iconfont" style="font-size: 28px;">&#xe7e2;</i>
-            <div class="count" v-show="this.unReadNotificationCount !== 0">
-              {{unReadNotificationCount<100?unReadNotificationCount:99+"+"}}
+            <div class="count" v-if="this.unReadNotificationCount && this.unReadNotificationCount !== 0">
+              {{unReadNotificationCount<100?unReadNotificationCount:"99+"}}
             </div>
           </router-link>
 
@@ -149,10 +149,9 @@
               password: ''
             },
 
-            userId: this.$store.getters.getUser.id,
 
             //未读通知数
-            unReadNotificationCount: 0,
+            unReadNotificationCount: '',
 
             //搜索条件
             search: '',
@@ -179,19 +178,17 @@
        },
        name() {
          return this.$store.getters.getUser.name;
-       }
+       },
      },
 
     //首次进入页面通过token加载用户信息,token从localStorage获取
     created() {
-        this.getUserInfo();
+      this.getUserInfo();
     },
     mounted() {
-      let userId = this.$store.getters.getUser.id;
-      console.log(userId)
-      if (userId) {
-        this.getNotificationsUnReadCount(userId);
-      }
+      this.$nextTick(() => {
+        this.getNotificationsUnReadCount();
+      })
     },
     methods: {
 
@@ -319,9 +316,13 @@
 
         /**
          * 获取未读通知数
-         * @param userId
          */
-        getNotificationsUnReadCount(userId) {
+        getNotificationsUnReadCount() {
+          let userId = this.$store.getters.getUser.id;
+          if (!userId) {
+            return;
+          }
+          console.log(userId);
           request.get(NOTIFICATIONS_UN_READ_COUNT_URL + userId)
             .then(({data}) => {
               this.unReadNotificationCount = data;

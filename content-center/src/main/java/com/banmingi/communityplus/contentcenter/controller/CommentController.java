@@ -66,5 +66,18 @@ public class CommentController {
     }
 
 
+    /**
+     * 根据评论id获取对应的文章id
+     * @param commentId 评论id
+     * @return 文章id
+     */
+    @GetMapping("/getArticleId/{commentId}")
+    public ResponseEntity<Integer> getArticleIdByCommentId(@PathVariable Integer commentId) {
+        Integer articleId = this.commentService.getArticleIdByCommentId(commentId);
+        if (articleId == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(articleId);
+    }
 
 }

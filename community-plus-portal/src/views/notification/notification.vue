@@ -19,7 +19,7 @@
         <span>{{notification.typeDesc}}</span>
         <!--外部标题-->
         <span v-if="notification.outerTitle">
-          <router-link class="outerTitle-style" to="#">{{notification.outerTitle}}</router-link>
+          <span class="outerTitle-style" @click="turnToOutTitleTargetPage(notification)">{{notification.outerTitle}}</span>
         </span>
       </div>
       <!--内容-->
@@ -57,7 +57,7 @@
 
 <script>
   import request from "@/utils/request";
-  import {NOTIFICATIONS_LIST_URL} from "@/utils/api";
+  import {NOTIFICATIONS_LIST_URL,COMMENT_GET_ARTICLE_ID_URL,NOTIFICATIONS_READ_URL} from "@/utils/api";
   import {getDateDiff} from "@/utils/common";
 
 
@@ -99,7 +99,40 @@
               message: '获取通知列表失败'
             });
           })
+        }
+      },
 
+      /**
+       * 标记某条通知已读
+       */
+      readNotification(notificationId) {
+        request.put(NOTIFICATIONS_READ_URL + notificationId)
+      },
+
+      /**
+       *跳转到外部标题原处
+       * <div><a href="/articles/13#comment2">111</a></div>
+       */
+      turnToOutTitleTargetPage(dto) {
+        let type = dto.type;
+        let outerId = dto.outerId;
+
+        //标记该通知已读
+        this.readNotification(dto.id);
+
+        //如果是针对文章的评论,直接跳转到该文章
+        if (type === "COMMENT_ARTICLE") {
+          location.href = "/articles/" + outerId;
+        }
+        //如果是针对评论的回复,先跳转到文章出处,在定位到评论处
+        if (type === "REPLY_COMMENT") {
+          //查询该评论所对应的文章
+          request.get(COMMENT_GET_ARTICLE_ID_URL + outerId)
+            .then(({data}) => {
+              location.href = "/articles/"+ data + "#comment" + outerId;
+            }).catch(err => {
+              console.error(err)
+          })
         }
       }
     }
@@ -139,6 +172,7 @@
     color: #303133;
     font-weight: 600;
     text-decoration: none;
+    cursor: pointer;
   }
   .outerTitle-style:hover {
     color: #b60b14;

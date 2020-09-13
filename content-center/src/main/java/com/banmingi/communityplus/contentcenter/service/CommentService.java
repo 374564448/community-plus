@@ -303,4 +303,17 @@ public class CommentService {
         String key = ARTICLE_ID_KEY + id;
         return (ArticleDTO) this.redisTemplate.opsForValue().get(key);
     }
+
+    /**
+     * 根据评论id获取对应的文章id
+     * @param commentId 评论id
+     * @return 文章id
+     */
+    public Integer getArticleIdByCommentId(Integer commentId) {
+        Comment comment = this.commentMapper.selectById(commentId);
+        if (comment==null) {
+            return null;
+        }
+        return comment.getArticleId();
+    }
 }

@@ -38,6 +38,7 @@ export const COMMENT_API_URL = BASE_API_URL + "/comment"
 export const COMMENT_CREATE_URL = COMMENT_API_URL + "/"
 export const GET_COMMENT_LIST_URL = COMMENT_API_URL + "/list"
 export const DELETE_COMMENT_URL = COMMENT_API_URL + "/delete/"
+export const COMMENT_GET_ARTICLE_ID_URL = COMMENT_API_URL + "/getArticleId/"
 
 
 
@@ -51,3 +52,4 @@ export const UPLOAD_IMAGE_URL = UPLOAD_API_URL + '/image';
 export const NOTIFICATIONS_API_URL = BASE_API_URL + "/notifications"
 export const NOTIFICATIONS_UN_READ_COUNT_URL = NOTIFICATIONS_API_URL + "/unReadCount/"
 export const NOTIFICATIONS_LIST_URL = NOTIFICATIONS_API_URL + "/list/"
+export const NOTIFICATIONS_READ_URL = NOTIFICATIONS_API_URL + "/read/"

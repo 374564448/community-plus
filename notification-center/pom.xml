@@ -36,7 +36,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <!-- mysql -->
         <dependency>
             <groupId>mysql</groupId>

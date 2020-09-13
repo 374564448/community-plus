@@ -61,7 +61,7 @@ public class ArticleService {
 
     /**
      * 发布或编辑文章
-     * @param articlePublishDTO
+     * @param articlePublishDTO 文章发布实体
      */
     public void publishOrUpdate(ArticlePublishDTO articlePublishDTO) {
         //移除redis中保存的文章
@@ -317,4 +317,5 @@ public class ArticleService {
         this.redisTemplate.delete(ARTICLE_ID_KEY + id);
         this.articleMapper.deleteById(id);
     }
+
 }

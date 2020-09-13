@@ -38,6 +38,8 @@ public class NotificationDTO implements Serializable {
      */
     private Integer outerId;
 
+    private Boolean outerTargetIsExist;
+
     /**
      * 通知的类型（回复了你的评论、评论了你的文章、点赞了你等等）
      */

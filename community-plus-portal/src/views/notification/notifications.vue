@@ -18,7 +18,6 @@
         </div>
       </el-col>
     </el-row>
-    <div><a href="/articles/13#comment2">111</a></div>
   </div>
 </template>
 
