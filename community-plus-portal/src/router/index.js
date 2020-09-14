@@ -10,6 +10,9 @@ import edit from "@/views/article/edit";
 import articles from "@/views/article/articles";
 import notifications from "@/views/notification/notifications";
 import notification from "@/views/notification/notification";
+import profiles from "@/views/profile/profiles";
+import profile from "@/views/profile/profile";
+import profileArticles from "@/views/profile/profileArticles";
 import error from "@/views/error";
 
 
@@ -52,10 +55,20 @@ export default new Router({
     },
     {
       path: '/notifications',
-      name: '',
+      name: 'notifications',
       component: notifications,
       children: [
         {path: '',name: 'notification',component: notification}
+      ]
+    },
+    {
+      path: '/profiles',
+      name: 'profiles',
+      component: profiles,
+      children: [
+        {path: '',name: 'profile',component: profile},
+        {path: 'articles',name: 'profileArticles',component: profileArticles}
+
       ]
     },
     {

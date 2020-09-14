@@ -48,13 +48,13 @@
             </div>
           <el-dropdown-menu slot="dropdown" style="margin: 3px;font-size: 20px">
             <el-dropdown-item>
-              <div>个人中心</div>
+              <div @click="turnProfile()">个人中心</div>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <div @click="turnProfileArticles()">我的文章</div>
             </el-dropdown-item>
             <el-dropdown-item>
               <div>我的收藏</div>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <div>我的文章</div>
             </el-dropdown-item>
             <el-dropdown-item>
               <div  @click="logout()">退出登录</div>
@@ -321,7 +321,20 @@
           }).catch(err => {
             console.error(err)
           })
-        }
+        },
+
+      /**
+       * 跳转到个人中心页面
+       */
+      turnProfile() {
+        this.$router.push({ name: 'profile', params: {categoryIndex: 0}})
+      },
+      /**
+       * 跳转到个人文章列表页面
+       */
+      turnProfileArticles() {
+        this.$router.push({ name: 'profileArticles', params: {categoryIndex: 1}})
+      }
 
       }
     }

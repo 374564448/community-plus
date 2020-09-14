@@ -4,12 +4,14 @@ import com.banmingi.communityplus.auth.annotations.CheckLogin;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleDTO;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleListDTO;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticlePublishDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ProfileArticleListDTO;
 import com.banmingi.communityplus.contentcenter.service.ArticleService;
 import com.github.pagehelper.PageInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +33,7 @@ public class ArticleController {
 
     /**
      * 文件文章id查找文章
+     *
      * @param id 文章id
      * @return 文章详情实体
      */
@@ -45,6 +48,7 @@ public class ArticleController {
 
     /**
      * 获取需要编辑的文章
+     *
      * @param id id
      * @return ArticlePublishDTO
      */
@@ -58,28 +62,58 @@ public class ArticleController {
 
 
     /**
-     *
-     * @param search 搜索条件
+     * @param search     搜索条件
      * @param categoryId 分类
-     * @param sort 排序方式
-     * @param pageNum 页号
-     * @param pageSize 一页的文章条数
+     * @param sort       排序方式
+     * @param pageNum    页号
+     * @param pageSize   一页的文章条数
      * @return 文章列表
      */
     @GetMapping("/q")
     public ResponseEntity<PageInfo<ArticleListDTO>> q(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Integer categoryId,
-            @RequestParam(required = false,defaultValue = "new") String sort,
-            @RequestParam(required = false,defaultValue = "1") Integer pageNum,
-            @RequestParam(required = false,defaultValue = "10") Integer pageSize) {
-        PageInfo<ArticleListDTO> articleList = this.articleService.q(search,categoryId,sort,pageNum,pageSize);
+            @RequestParam(required = false, defaultValue = "new") String sort,
+            @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        PageInfo<ArticleListDTO> articleList = this.articleService.q(search, categoryId, sort, pageNum, pageSize);
 
         return ResponseEntity.ok(articleList);
     }
 
     /**
+     *
+     * @param userId 用户id
+     * @param pageNum 第几页
+     * @param pageSize 页面大小
+     * @return 个人文章列表
+     */
+    @GetMapping("/profile/list/{userId}")
+    @CheckLogin
+    public ResponseEntity<PageInfo<ProfileArticleListDTO>> profileArticleList(
+            @PathVariable Integer userId,
+            @RequestParam(required = false, defaultValue = "1") Integer pageNum,
+            @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        PageInfo<ProfileArticleListDTO> profileArticleListDTOPageInfo
+                = this.articleService.profileArticleList(userId,pageNum,pageSize);
+        return ResponseEntity.ok(profileArticleListDTOPageInfo);
+    }
+
+    /**
+     * 删除文章
+     * @param id id
+     * @return void
+     */
+    @DeleteMapping("/delete/{id}")
+    @CheckLogin
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        this.articleService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * 发布文章.
+     *
      * @return 成功
      */
     @PostMapping("/publish")
@@ -91,6 +125,7 @@ public class ArticleController {
 
     /**
      * 保存文章 暂时保存7天.
+     *
      * @param articlePublishDTO 文章发布实体
      * @return 成功
      */
@@ -103,6 +138,7 @@ public class ArticleController {
 
     /**
      * 获取保存的文章
+     *
      * @param userId 用户id
      * @return 返回保存的文章
      */

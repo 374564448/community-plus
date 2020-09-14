@@ -34,6 +34,10 @@ export const ARTICLE_PUBLISH_URL = ARTICLE_API_URL + '/publish';
 export const ARTICLE_LIST_URL = ARTICLE_API_URL + '/q';
 //文章详情API
 export const ARTICLE_DETAIL_URL = ARTICLE_API_URL + '/';
+//个人文章列表
+export const PROFILE_ARTICLE_LIST_URL = ARTICLE_API_URL + "/profile/list/"
+//删除文章
+export const ARTICLE_DELETE_URL = ARTICLE_API_URL + "/delete/"
 
 //评论
 export const COMMENT_API_URL = BASE_API_URL + "/comment"

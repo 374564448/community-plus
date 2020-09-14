@@ -9,7 +9,7 @@
     <div v-if="!notificationPageInfo || !notificationPageInfo.total || notificationPageInfo.total===0" style="text-align: center;padding:40px 0;user-select: none">
       <i class="iconfont" style="font-size: 120px;color: rgba(0,181,173,0.7);">&#xe612;</i>
     </div>
-    <div v-if="notificationPageInfo && notificationPageInfo.total!==0" class="notification-list-box" :key="index" v-for="(notification,index) in notificationPageInfo.list">
+    <div v-if="notificationPageInfo && notificationPageInfo.total" class="notification-list-box" :key="index" v-for="(notification,index) in notificationPageInfo.list">
       <div class="notification-content">
         <!--通知人-->
         <span><router-link style="color: #3399ea;text-decoration: underline" to="#">
@@ -38,7 +38,7 @@
     </div>
 
     <!-- 分页 -->
-    <div class="pagination-box">
+    <div v-show="notificationPageInfo && notificationPageInfo.total" class="pagination-box">
       <el-pagination
         background
         layout="prev, pager, next,jumper"

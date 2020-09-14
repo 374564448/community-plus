@@ -41,18 +41,17 @@
           {iconfont: '&#xe60b;',name: '私信'},
           {iconfont: '&#xe60e;',name: '系统'}
         ],
-        //被选中的通知类别
-        notificationCategoryActive: 0
       }
     },
-    mounted() {
-      /**
-       * 选中左边分类
-       */
-      if (this.$route.params.categoryIndex) {
-        this.notificationCategoryActive = this.$route.params.categoryIndex;
-      }
+    computed: {
+      profileCategoryActive: {
+        get: function () {
+          return this.$route.params.categoryIndex?this.$route.params.categoryIndex:0;
+        },
+        set: function (v) {
 
+        }
+      }
     },
     methods: {
       /**
@@ -76,7 +75,7 @@
       showCategoryPage(index) {
         this.notificationCategoryActive = index;
         if (index === 0) {
-          location.href = "/notifications"
+          this.$router.push({ name: 'notification', params: {categoryIndex: index}})
         }
       }
     }

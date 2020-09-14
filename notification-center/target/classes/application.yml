@@ -36,7 +36,7 @@ spring:
     #发件人
     username: 374564448@qq.com
     #QQ邮箱授权码
-    password: rebrfjqhjbyzbjid
+    password: whqvodimmycbbige
     properties:
       mail:
         smtp:

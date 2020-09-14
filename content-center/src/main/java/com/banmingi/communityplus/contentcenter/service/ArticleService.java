@@ -5,6 +5,7 @@ import com.banmingi.communityplus.contentcenter.dto.article.ArticleAuditDTO;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleDTO;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticleListDTO;
 import com.banmingi.communityplus.contentcenter.dto.article.ArticlePublishDTO;
+import com.banmingi.communityplus.contentcenter.dto.article.ProfileArticleListDTO;
 import com.banmingi.communityplus.contentcenter.dto.user.UserAddBonusMsgDTO;
 import com.banmingi.communityplus.contentcenter.dto.user.UserDTO;
 import com.banmingi.communityplus.contentcenter.entity.Article;
@@ -70,7 +71,9 @@ public class ArticleService {
         Article article = new Article();
         BeanUtils.copyProperties(articlePublishDTO,article);
         if (article.getId() == null){
-            article.setAuditStatus(ArticleStatusEnum.NOT_YET.name());
+            //article.setAuditStatus(ArticleStatusEnum.NOT_YET.name());
+            //TODO 暂不提供文章审核功能
+            article.setAuditStatus(ArticleStatusEnum.PASS.name());
             article.setCreateTime(System.currentTimeMillis());
             article.setModifyTime(System.currentTimeMillis());
             this.articleMapper.insert(article);
@@ -278,6 +281,45 @@ public class ArticleService {
         return articleListDTOPageInfo;
     }
 
+    /**
+     *
+     * @param userId 用户id
+     * @param pageNum 第几页
+     * @param pageSize 页面大小
+     * @return 个人文章列表
+     */
+    public PageInfo<ProfileArticleListDTO> profileArticleList(Integer userId, Integer pageNum, Integer pageSize) {
+        //构建查询条件
+        QueryWrapper<Article> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id",userId);
+        wrapper.orderByDesc("create_time");
+
+        //分页
+        //切入下面不分页的SQL,自动拼接分页的SQL
+        PageHelper.startPage(pageNum,pageSize);
+        //根据条件查询结果
+        List<Article> articleList = this.articleMapper.selectList(wrapper);
+
+        PageInfo<Article> articlePageInfo = new PageInfo<>(articleList);
+
+        //构建返回结果
+        List<ProfileArticleListDTO> profileArticleListDTOList = articleList.stream().map(article -> {
+            ProfileArticleListDTO profileArticleListDTO = new ProfileArticleListDTO();
+            BeanUtils.copyProperties(article, profileArticleListDTO);
+            //分类图片
+            String categoryImage = this.categoryMapper.selectById(profileArticleListDTO.getCategoryId()).getImage();
+            profileArticleListDTO.setCategoryImage(categoryImage);
+            return profileArticleListDTO;
+        }).collect(Collectors.toList());
+
+        //PageInfo<Article> --> PageInfo<ArticleListDTO>
+        PageInfo<ProfileArticleListDTO> profileArticleListDTOPageInfo = new PageInfo<>();
+        BeanUtils.copyProperties(articlePageInfo,profileArticleListDTOPageInfo);
+        profileArticleListDTOPageInfo.setList(profileArticleListDTOList);
+
+        return profileArticleListDTOPageInfo;
+    }
+
 
 
     /**
@@ -334,4 +376,14 @@ public class ArticleService {
     }
 
 
+    /**
+     * 删除文章
+     * @param id id
+     */
+    public void delete(Integer id) {
+        //移除redis中保存的文章详情
+        this.redisTemplate.delete(ARTICLE_ID_KEY + id);
+        //删除数据库
+        this.articleMapper.deleteById(id);
+    }
 }
