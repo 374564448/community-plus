@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.banmingi.communityplus.auth.AuthAspect,\
-  com.banmingi.communityplus.auth.JwtOperator
