@@ -14,10 +14,10 @@ import java.util.UUID;
  */
 public class OSSProvider {
 
-    private static final String ENDPOINT = "oss-cn-qingdao.aliyuncs.com";
-    private static final String ACCESS_KEY_ID = "LTAI4G7rt58VkRmj8mHAgNSQ";
-    private static final String ACCESS_KEY_SECRET = "w7eQyBJOBZul5A5YfzZNBqRIle9z7e";
-    private static final String BUCKET_NAME = "banmingi-community-plus";
+    private static final String ENDPOINT = "xxxxxxx";
+    private static final String ACCESS_KEY_ID = "xxxxxxx";
+    private static final String ACCESS_KEY_SECRET = "xxxxxxx";
+    private static final String BUCKET_NAME = "xxxxxxx";
 
     /**
      * 上传文件到阿里云OSS服务器
